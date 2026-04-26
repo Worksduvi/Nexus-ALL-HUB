@@ -1,0 +1,35 @@
+{
+  "name": "NEXUS HUB DUVI",
+  "short_name": "NEXUS HUB",
+  "description": "Futuristic AI Dashboard - Your personal command center",
+  "start_url": "/Nexus-ALL-HUB/index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#00f0ff",
+  "orientation": "any",
+  "scope": "/Nexus-ALL-HUB/",
+  "lang": "es",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/Nexus-ALL-HUB/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Nexus-ALL-HUB/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Abrir NEXUS HUB",
+      "short_name": "NEXUS",
+      "url": "/Nexus-ALL-HUB/index.html",
+      "icons": [{ "src": "/Nexus-ALL-HUB/icon.png", "sizes": "512x512" }]
+    }
+  ]
+}
