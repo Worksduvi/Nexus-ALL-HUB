@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="NEXUS HUB" />
+  <meta name="theme-color" content="#00f0ff" />
+  <meta name="description" content="NEXUS HUB DUVI - Futuristic AI Dashboard" />
+  <title>NEXUS HUB DUVI</title>
+
+  <link rel="manifest" href="/Nexus-ALL-HUB/manifest.json" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/Nexus-ALL-HUB/icon.png" />
+  <link rel="shortcut icon" href="/Nexus-ALL-HUB/icon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/Nexus-ALL-HUB/icon.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter','sans-serif'], display: ['Rajdhani','sans-serif'] },
+          animation: {
+            'fade-in': 'fadeIn 0.3s ease-out',
+            'slide-in-right': 'slideInRight 0.3s ease-out',
+            'scale-up': 'scaleUp 0.2s ease-out',
+          },
+          keyframes: {
+            fadeIn: { from:{opacity:'0',transform:'translateY(-8px)'}, to:{opacity:'1',transform:'translateY(0)'} },
+            slideInRight: { from:{transform:'translateX(100%)'}, to:{transform:'translateX(0)'} },
+            scaleUp: { from:{opacity:'0',transform:'scale(0.9)'}, to:{opacity:'1',transform:'scale(1)'} },
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;overflow-x:hidden;background:#0f172a}
+    ::-webkit-scrollbar{width:6px;height:6px}
+    ::-webkit-scrollbar-track{background:#0f172a}
+    ::-webkit-scrollbar-thumb{background:#334155;border-radius:3px}
+    .custom-scrollbar::-webkit-scrollbar{width:4px}
+    .custom-scrollbar::-webkit-scrollbar-thumb{background:#334155;border-radius:2px}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .animate-fade-in-up{animation:fadeInUp 0.4s ease-out}
+    @keyframes pwaGlow{
+      from{box-shadow:0 0 20px rgba(0,240,255,0.4),0 4px 15px rgba(0,0,0,0.3)}
+      to{box-shadow:0 0 40px rgba(168,85,247,0.6),0 8px 25px rgba(0,0,0,0.4)}
+    }
+    /* PWA install button — hidden by default, shown by JS */
+    #pwa-install-btn{
+      display:none;
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+      z-index:9999;
+      background:linear-gradient(135deg,#00f0ff,#a855f7);
+      color:#000;font-family:'Rajdhani',sans-serif;font-weight:700;
+      font-size:14px;letter-spacing:0.15em;text-transform:uppercase;
+      padding:12px 28px;border-radius:50px;border:none;cursor:pointer;
+      align-items:center;gap:10px;
+      animation:pwaGlow 2s ease-in-out infinite alternate;
+      white-space:nowrap;
+    }
+    #pwa-install-btn.show{display:flex}
+    #pwa-install-btn svg{width:20px;height:20px;flex-shrink:0}
+    /* iOS banner */
+    #pwa-banner{
+      display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+      z-index:9999;background:rgba(15,23,42,0.97);border:1px solid rgba(0,240,255,0.4);
+      border-radius:20px;padding:16px 20px;max-width:360px;width:calc(100% - 32px);
+      box-shadow:0 0 30px rgba(0,240,255,0.2);backdrop-filter:blur(12px);color:white;
+      font-family:'Inter',sans-serif;
+    }
+    #pwa-banner.show{display:block}
+    #pwa-banner-close{
+      position:absolute;top:10px;right:12px;background:none;border:none;
+      color:#94a3b8;cursor:pointer;font-size:18px;line-height:1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PWA Install Button -->
+  <button id="pwa-install-btn" aria-label="Instalar NEXUS HUB">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+    </svg>
+    Instalar NEXUS HUB
+  </button>
+
+  <!-- iOS Banner -->
+  <div id="pwa-banner">
+    <button id="pwa-banner-close">✕</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <img src="/Nexus-ALL-HUB/icon.png" alt="NEXUS HUB" style="width:44px;height:44px;border-radius:10px;flex-shrink:0" onerror="this.style.display='none'"/>
+      <div>
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:#00f0ff;letter-spacing:.1em">NEXUS HUB DUVI</div>
+        <div style="font-size:11px;color:#64748b">Instala esta app en tu dispositivo</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#cbd5e1;line-height:1.6">
+      <strong style="color:#00f0ff">En iPhone/iPad:</strong> toca
+      <span style="display:inline-block;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:1px 7px;font-size:12px">⬆️ Compartir</span>
+      → <em>"Agregar a pantalla de inicio"</em>
+    </div>
+  </div>
+
+  <div id="root"></div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://esm.sh/react@18.3.1",
+      "react/": "https://esm.sh/react@18.3.1/",
+      "react-dom": "https://esm.sh/react-dom@18.3.1",
+      "react-dom/": "https://esm.sh/react-dom@18.3.1/",
+      "lucide-react": "https://esm.sh/lucide-react@0.383.0"
+    }
+  }
+  </script>
+
+  <script type="text/babel" data-type="module" data-presets="react">
+    import React, { useState, useEffect, useRef, useCallback } from 'react';
+    import ReactDOM from 'react-dom/client';
+    import {
+      Menu, Search, Edit2, Check, Timer, MessageCircle, Sun, Layers, Plus, X, Pin,
+      Grid, Layout, Trash2, PinOff, Calendar, Share2, Tag, ChevronUp, ShieldCheck,
+      Zap, Sparkles, Briefcase, Globe, RotateCcw, Play, Pause, Send, Cpu, Save,
+      BookOpen, Database, CloudSun, MapPin, ChevronDown, GripVertical,
+      Settings as SettingsIcon, Mic, ChevronLeft, ChevronRight, ChevronsUp, Pencil,
+      ArrowUp, UserPlus, Mail, MessageSquareText, Youtube, Twitter, Instagram,
+      Linkedin, Video, Github, MessageSquare, Tv, Facebook, LinkIcon, ExternalLink,
+      Rss, Download, FileText, Wind, Droplets, Thermometer, Bell, Clock, Keyboard
+    } from 'lucide-react';
+
+    // ── STORAGE ──────────────────────────────────────────────────────────────
+    const save = (k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v))}catch(e){} };
+    const load = (k,fb)=>{ try{const i=localStorage.getItem(k);return i?JSON.parse(i):fb}catch(e){return fb} };
+
+    // ── TRANSLATIONS ─────────────────────────────────────────────────────────
+    const T = {
+      es:{
+        settings:'Ajustes de Sistema', pomodoro:'Pomodoro', addButton:'Inicializar Módulo',
+        save:'Confirmar', cancel:'Abortar', general:'Sistemas Núcleo',
+        search:'Escanear Módulos...', work:'Ciclo Enfoque', break:'Recarga',
+        guide:'Manual', chat:'Asistente IA', loadingNews:'Cargando Noticias...', noSignal:'Sin Señal',
+        pinned:'Fijados', socials:'Mis Redes Sociales', organizer:'Organizador',
+        notes:'Notas', reminders:'Recordatorios', business:'Negocios', webTools:'Herramientas Web',
+        weather:'Clima', layoutOrder:'Diseño', reorderModules:'Reordenar Secciones',
+        neonIntensity:'Intensidad Neón', searchEngine:'Buscador', apiKeys:'Claves API',
+        // tabs
+        tabSystem:'Sistema', tabData:'Datos', tabRss:'Canales RSS', tabLayout:'Diseño',
+        // general tab
+        systemCore:'Núcleo de Sistema', langLabel:'Idioma de Interfaz',
+        openNewTab:'Abrir en nueva pestaña', showNewsLabel:'Mostrar Noticias',
+        // weather tab
+        atmosphereControl:'Control Atmosférico', weatherEnabled:'Clima activado',
+        weatherPlaceholder:'Escribe ciudad...',
+        // api tab
+        apiTabTitle:'Claves de Acceso Multi-IA', apiProvider:'Proveedor IA', apiActiveModel:'Modelo activo',
+        apiGeminiLabel:'Google Gemini API Key', apiGeminiDesc:'Requerida para Chat IA y resúmenes de noticias.',
+        apiGroqLabel:'Groq API Key', apiGroqDesc:'Ultra-rápido. Llama, Mixtral. Gratis con límites.',
+        apiClaudeLabel:'Anthropic Claude API Key', apiClaudeDesc:'Claude 3.5 Sonnet, Claude 3 Haiku.',
+        apiOpenRouterLabel:'OpenRouter API Key', apiOpenRouterDesc:'Acceso a +200 modelos: GPT-4o, Gemini, Mistral…',
+        // rss tab
+        rssChannelName:'Nombre Canal', rssChannelUrl:'URL RSS', rssAddBtn:'Añadir Fuente',
+        // data tab
+        dataMigration:'Migración', exportAll:'Exportar Todo', importAll:'Importar Todo',
+        emergencyProtocol:'Protocolo de Emergencia',
+        emergencyWarning:'Esta acción borrará TODOS los datos. IRREVERSIBLE.',
+        factoryReset:'REINICIO DE FÁBRICA',
+        importSuccess:'✅ Backup cargado. Pulsa GUARDAR CAMBIOS para aplicar.',
+        importError:'❌ Error: archivo JSON inválido.',
+        // save/close
+        closeBtn:'CERRAR', saveChanges:'GUARDAR CAMBIOS',
+        // guide
+        guideTitle:'Manual de Uso — NEXUS HUB DUVI',
+        guideInstallTitle:'📲 Instalación como App (PWA)',
+        guideInstallBody:'En Android/Chrome: aparece el botón flotante "Instalar NEXUS HUB". Tócalo y confirma. En iPhone/iPad con Safari: toca el botón Compartir (⬆️) y selecciona "Agregar a pantalla de inicio". Una vez instalada, la app se abrirá sin barra del navegador.',
+        guideApiTitle:'🔑 Configurar API Keys', guideApiBody:'Ve a Ajustes → Claves API. Añade hasta 4 proveedores: Gemini (Google AI Studio, gratis), Groq (ultra-rápido, gratis), Claude (Anthropic) y OpenRouter (multi-modelo). El proveedor activo se usa en Chat IA y resúmenes.',
+        guideEditTitle:'✏️ Editar y Organizar Módulos', guideEditBody:'Toca el lápiz en la cabecera para activar el modo edición. Reordena con flechas, fija favoritos con el pin amarillo, cambia categoría con la etiqueta, elimina con la papelera.',
+        guideModulesTitle:'➕ Añadir Módulos', guideModulesBody:'En modo edición, toca el botón "+". Configura nombre, URL, categoría, tema visual (40+ estilos), tamaño y color del indicador. Los módulos se guardan automáticamente.',
+        guidePomodoroTitle:'⏱ Pomodoro', guidePomodoroBody:'Toca el icono de reloj en la cabecera. Ciclos de trabajo y descanso configurables en Ajustes.',
+        guideNewsTitle:'📰 Flujo de Noticias', guideNewsBody:'Muestra titulares en tiempo real desde tus fuentes RSS. El botón 📄 resume la noticia con IA. Añade fuentes en Ajustes → RSS.',
+        guideOrganizerTitle:'📅 Organizador', guideOrganizerBody:'Accede desde el icono de calendario. Gestiona recordatorios con fecha/hora y notas tipo post-it.',
+        guideBackupTitle:'💾 Backup y Migración', guideBackupBody:'En Ajustes → Datos exporta TODOS tus módulos, ajustes y feeds a JSON. Al importar, se restauran exactamente todos tus botones con sus URLs.',
+        guideWeatherTitle:'🌤 Clima', guideWeatherBody:'En Ajustes → Clima, escribe tu ciudad y pulsa el icono de ubicación. Datos de Open-Meteo (gratis, sin registro).',
+        // edit modal
+        editModuleTitle:'Editar Módulo',
+        fieldName:'Nombre', fieldUrl:'URL', fieldCategory:'Categoría',
+        fieldTheme:'Tema Visual', fieldSize:'Tamaño', fieldColor:'Color Indicador',
+        sizeSmall:'Pequeño', sizeStandard:'Estándar', sizeWide:'Ancho', sizeLarge:'Grande',
+        changeCategoryTitle:'Cambiar Categoría',
+        // organizer
+        newReminder:'Nuevo Recordatorio', reminderTitle:'Título', reminderDate:'Fecha', reminderTime:'Hora',
+        newNoteBtn:'Nueva Nota', writeHere:'Escribe...',
+        // chat / voice
+        chatPlaceholder:'Pregunta a la IA...', chatThinking:'Pensando...', chatReady:'Sistema Listo.',
+        chatBtn:'CHATS', chatSubtitle:'Chat IA de Texto', tmw:'Mañana',
+        // footer
+        footerCredits:'© 2026 NEXUS HUB DUVI App. Todos los derechos reservados.',
+        footerCreatedBy:'Creado por', footerPrivacy:'Política de Privacidad',
+        footerLegal:'Aviso Legal', footerSupport:'Apoyar el proyecto',
+        privacyTitle:'Política de Privacidad', legalTitle:'Aviso Legal',
+      },
+      en:{
+        settings:'System Settings', pomodoro:'Pomodoro', addButton:'Initialize Module',
+        save:'Commit', cancel:'Abort', general:'Core Systems',
+        search:'Scan Modules...', work:'Focus Cycle', break:'Recharge',
+        guide:'Manual', chat:'AI Assistant', loadingNews:'Loading News...', noSignal:'No Signal',
+        pinned:'Pinned', socials:'My Social Networks', organizer:'Organizer',
+        notes:'Sticky Notes', reminders:'Reminders', business:'Business', webTools:'Web Tools',
+        weather:'Weather', layoutOrder:'Layout', reorderModules:'Reorder Modules',
+        neonIntensity:'Neon Intensity', searchEngine:'Search Engine', apiKeys:'API Keys',
+        tabSystem:'System', tabData:'Data', tabRss:'RSS Feeds', tabLayout:'Layout',
+        systemCore:'System Core', langLabel:'Interface Language',
+        openNewTab:'Open in new tab', showNewsLabel:'Show News',
+        atmosphereControl:'Atmosphere Control', weatherEnabled:'Weather enabled',
+        weatherPlaceholder:'Type city...',
+        apiTabTitle:'Multi-AI Access Keys', apiProvider:'AI Provider', apiActiveModel:'Active model',
+        apiGeminiLabel:'Google Gemini API Key', apiGeminiDesc:'Required for AI Chat and news summaries.',
+        apiGroqLabel:'Groq API Key', apiGroqDesc:'Ultra-fast. Llama, Mixtral models. Free tier.',
+        apiClaudeLabel:'Anthropic Claude API Key', apiClaudeDesc:'Claude 3.5 Sonnet, Claude 3 Haiku.',
+        apiOpenRouterLabel:'OpenRouter API Key', apiOpenRouterDesc:'Access to 200+ models: GPT-4o, Gemini, Mistral…',
+        rssChannelName:'Channel Name', rssChannelUrl:'RSS URL', rssAddBtn:'Add Feed',
+        dataMigration:'Migration', exportAll:'Export All', importAll:'Import All',
+        emergencyProtocol:'Emergency Protocol',
+        emergencyWarning:'This will delete ALL data. IRREVERSIBLE.',
+        factoryReset:'FACTORY RESET',
+        importSuccess:'✅ Backup loaded. Press SAVE CHANGES to apply.',
+        importError:'❌ Error: invalid JSON file.',
+        closeBtn:'CLOSE', saveChanges:'SAVE CHANGES',
+        guideTitle:'User Manual — NEXUS HUB DUVI',
+        guideInstallTitle:'📲 Install as App (PWA)', guideInstallBody:'On Android/Chrome: tap the floating "Install NEXUS HUB" button. On iPhone/iPad with Safari: tap Share (⬆️) → "Add to Home Screen". Once installed, the app opens without a browser bar.',
+        guideApiTitle:'🔑 Configure API Keys', guideApiBody:'Go to Settings → API Keys. Add up to 4 providers: Gemini (free), Groq (ultra-fast, free tier), Claude (Anthropic) and OpenRouter (multi-model). The active provider is used for AI Chat and summaries.',
+        guideEditTitle:'✏️ Edit and Organize Modules', guideEditBody:'Tap the pencil icon in the header to activate edit mode. Reorder with arrows, pin favorites with the yellow pin, change category with the tag icon, delete with the trash icon.',
+        guideModulesTitle:'➕ Add Modules', guideModulesBody:'In edit mode, tap "+". Configure name, URL, category, visual theme (40+ styles), size and indicator color. Modules are saved automatically.',
+        guidePomodoroTitle:'⏱ Pomodoro', guidePomodoroBody:'Tap the clock icon in the header. Work and break cycles are configurable in Settings.',
+        guideNewsTitle:'📰 News Stream', guideNewsBody:'Shows real-time headlines from your RSS feeds. The 📄 button summarizes the news with AI. Add feeds in Settings → RSS.',
+        guideOrganizerTitle:'📅 Organizer', guideOrganizerBody:'Access from the calendar icon. Manage reminders with date/time and colorful sticky notes.',
+        guideBackupTitle:'💾 Backup & Migration', guideBackupBody:'In Settings → Data, export ALL your modules, settings and feeds to JSON. When importing, all your buttons with their URLs are exactly restored.',
+        guideWeatherTitle:'🌤 Weather', guideWeatherBody:'In Settings → Weather, type your city and tap the location icon. Data from Open-Meteo API (free, no registration).',
+        editModuleTitle:'Edit Module',
+        fieldName:'Name', fieldUrl:'URL', fieldCategory:'Category',
+        fieldTheme:'Visual Theme', fieldSize:'Size', fieldColor:'Indicator Color',
+        sizeSmall:'Small', sizeStandard:'Standard', sizeWide:'Wide', sizeLarge:'Large',
+        changeCategoryTitle:'Change Category',
+        newReminder:'New Reminder', reminderTitle:'Title', reminderDate:'Date', reminderTime:'Time',
+        newNoteBtn:'New Note', writeHere:'Write here...',
+        chatPlaceholder:'Ask the AI...', chatThinking:'Thinking...', chatReady:'System Ready.',
+        chatBtn:'CHATS', chatSubtitle:'AI Text Chat', tmw:'Tomorrow',
+        footerCredits:'© 2026 NEXUS HUB DUVI App. All rights reserved.',
+        footerCreatedBy:'Created by', footerPrivacy:'Privacy Policy',
+        footerLegal:'Legal Notice', footerSupport:'Support this project',
+        privacyTitle:'Privacy Policy', legalTitle:'Legal Notice',
+      },
+      zh:{
+        settings:'系统设置', pomodoro:'番茄钟', addButton:'初始化模块',
+        save:'提交', cancel:'中止', general:'核心系统',
+        search:'扫描模块...', work:'专注周期', break:'充能',
+        guide:'手册', chat:'AI助手', loadingNews:'加载新闻...', noSignal:'无信号',
+        pinned:'固定模块', socials:'社交网络', organizer:'智能管理器',
+        notes:'便利贴', reminders:'提醒', business:'商业中心', webTools:'网页工具',
+        weather:'天气', layoutOrder:'布局排序', reorderModules:'重新排列',
+        neonIntensity:'霓虹强度', searchEngine:'搜索引擎', apiKeys:'API密钥',
+        tabSystem:'系统', tabData:'数据', tabRss:'RSS频道', tabLayout:'布局',
+        systemCore:'系统核心', langLabel:'界面语言',
+        openNewTab:'在新标签页打开', showNewsLabel:'显示新闻',
+        atmosphereControl:'大气控制', weatherEnabled:'启用天气',
+        weatherPlaceholder:'输入城市...',
+        apiTabTitle:'多AI访问密钥', apiProvider:'AI提供商', apiActiveModel:'活跃模型',
+        apiGeminiLabel:'Google Gemini API Key', apiGeminiDesc:'AI聊天和新闻摘要所需。',
+        apiGroqLabel:'Groq API Key', apiGroqDesc:'超快推理。Llama、Mixtral。提供免费额度。',
+        apiClaudeLabel:'Anthropic Claude API Key', apiClaudeDesc:'Claude 3.5 Sonnet、Claude 3 Haiku。',
+        apiOpenRouterLabel:'OpenRouter API Key', apiOpenRouterDesc:'统一访问200+模型：GPT-4o、Gemini、Mistral…',
+        rssChannelName:'频道名称', rssChannelUrl:'RSS网址', rssAddBtn:'添加源',
+        dataMigration:'迁移', exportAll:'导出全部', importAll:'导入全部',
+        emergencyProtocol:'紧急协议',
+        emergencyWarning:'此操作将删除所有数据。不可逆。',
+        factoryReset:'恢复出厂设置',
+        importSuccess:'✅ 备份已加载。点击保存更改以应用。',
+        importError:'❌ 错误：JSON文件无效。',
+        closeBtn:'关闭', saveChanges:'保存更改',
+        guideTitle:'用户手册 — NEXUS HUB DUVI',
+        guideInstallTitle:'📲 安装为应用 (PWA)', guideInstallBody:'在Android/Chrome上：点击底部浮动的"安装NEXUS HUB"按钮。在iPhone/iPad的Safari上：点击分享(⬆️)→"添加到主屏幕"。安装后，应用将无浏览器栏打开。',
+        guideApiTitle:'🔑 配置API密钥', guideApiBody:'进入设置→API密钥。可添加最多4个提供商：Gemini（免费）、Groq（超快）、Claude（Anthropic）和OpenRouter（多模型）。',
+        guideEditTitle:'✏️ 编辑和组织模块', guideEditBody:'点击标题栏中的铅笔图标激活编辑模式。用箭头重新排序、用黄色图钉固定、用标签更改类别、用垃圾桶删除模块。',
+        guideModulesTitle:'➕ 添加模块', guideModulesBody:'在编辑模式下，点击"+"。配置名称、URL、类别、视觉主题（40+样式）、大小和指示器颜色。',
+        guidePomodoroTitle:'⏱ 番茄钟', guidePomodoroBody:'点击标题栏中的时钟图标。工作和休息周期可在设置中配置。',
+        guideNewsTitle:'📰 新闻流', guideNewsBody:'实时显示RSS源的头条新闻。📄按钮用AI摘要新闻。在设置→RSS中添加源。',
+        guideOrganizerTitle:'📅 组织者', guideOrganizerBody:'从日历图标访问。管理带日期/时间的提醒和彩色便利贴。',
+        guideBackupTitle:'💾 备份与迁移', guideBackupBody:'在设置→数据中，将所有模块、设置和RSS源导出为JSON。导入时，所有按钮及其URL将被精确恢复。',
+        guideWeatherTitle:'🌤 天气', guideWeatherBody:'在设置→天气中，输入城市名称并点击位置图标。数据来自Open-Meteo API（免费）。',
+        editModuleTitle:'编辑模块',
+        fieldName:'名称', fieldUrl:'网址', fieldCategory:'类别',
+        fieldTheme:'视觉主题', fieldSize:'尺寸', fieldColor:'指示器颜色',
+        sizeSmall:'小', sizeStandard:'标准', sizeWide:'宽', sizeLarge:'大',
+        changeCategoryTitle:'更改类别',
+        newReminder:'新建提醒', reminderTitle:'标题', reminderDate:'日期', reminderTime:'时间',
+        newNoteBtn:'新建便签', writeHere:'写点什么...',
+        chatPlaceholder:'询问AI...', chatThinking:'思考中...', chatReady:'系统就绪。',
+        chatBtn:'聊天', chatSubtitle:'AI文字聊天', tmw:'明天',
+        footerCredits:'© 2026 NEXUS HUB DUVI App. 保留所有权利。',
+        footerCreatedBy:'创建者', footerPrivacy:'隐私政策',
+        footerLegal:'法律声明', footerSupport:'支持此项目',
+        privacyTitle:'隐私政策', legalTitle:'法律声明',
+      }
+    };
+
+    // ── CATEGORY TRANSLATIONS ────────────────────────────────────────────────
+    const CAT = {
+      'AI Models':{es:'Modelos IA',en:'AI Models',zh:'AI模型'},
+      'Development':{es:'Desarrollo',en:'Development',zh:'开发工具'},
+      'General':{es:'General',en:'General',zh:'通用'},
+      'More IA Tools':{es:'Más Herramientas IA',en:'More AI Tools',zh:'更多AI工具'},
+      'Business':{es:'Negocios',en:'Business',zh:'商务'},
+      'Web Tools':{es:'Herramientas Web',en:'Web Tools',zh:'网页工具'},
+      'Social':{es:'Social',en:'Social',zh:'社交'},
+    };
+    const catLabel = (cat,lang) => CAT[cat]?.[lang]||cat;
+
+    // ── BUTTON THEMES ────────────────────────────────────────────────────────
+    const THEMES = {
+      'neon-blue':'bg-slate-900 border border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.3)] hover:shadow-[0_0_25px_rgba(34,211,238,0.6)] text-cyan-400',
+      'neon-green':'bg-slate-900 border border-green-400 shadow-[0_0_15px_rgba(74,222,128,0.3)] hover:shadow-[0_0_25px_rgba(74,222,128,0.6)] text-green-400',
+      'neon-pink':'bg-slate-900 border border-fuchsia-400 shadow-[0_0_15px_rgba(232,121,249,0.3)] text-fuchsia-400',
+      'neon-amber':'bg-slate-900 border border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.3)] text-amber-400',
+      'glass-clear':'bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20',
+      'glass-dark':'bg-black/30 backdrop-blur-md border border-white/10 text-white hover:bg-black/50',
+      'minimal-dark':'bg-slate-800/80 border border-slate-700 text-slate-200 hover:bg-slate-700',
+      'minimal-light':'bg-white border border-slate-200 text-slate-800 hover:bg-slate-50',
+      'cyberpunk':'bg-yellow-400 border-2 border-black text-black shadow-[4px_4px_0px_0px_#000]',
+      'matrix':'bg-black border border-green-500 text-green-400 font-mono',
+      'retro-wave':'bg-gradient-to-br from-purple-900 via-pink-800 to-orange-600 border border-pink-400/50 text-pink-200',
+      'gold-rush':'bg-gradient-to-br from-yellow-900 to-amber-700 border border-yellow-400/50 text-yellow-200',
+      'outline':'bg-transparent border-2 border-cyan-400 text-cyan-400 hover:bg-cyan-400/10',
+      'lava':'bg-gradient-to-br from-red-900 to-orange-600 border border-red-500/50 text-orange-200',
+      'ocean':'bg-gradient-to-br from-blue-900 to-cyan-700 border border-blue-400/50 text-blue-100',
+      'forest':'bg-gradient-to-br from-green-900 to-emerald-700 border border-green-400/50 text-emerald-200',
+      'midnight':'bg-gradient-to-br from-slate-900 to-blue-950 border border-blue-800/50 text-blue-300',
+      'slate':'bg-slate-700 border border-slate-600 text-slate-100 hover:bg-slate-600',
+      'void':'bg-black border border-slate-800 text-slate-300',
+      'holographic':'bg-gradient-to-br from-cyan-400/20 via-fuchsia-400/20 to-yellow-400/20 border border-white/30 text-white backdrop-blur-sm',
+      'quantum-field':'bg-gradient-to-br from-violet-900 to-cyan-900 border border-violet-400/40 text-violet-200',
+      'plasma-storm':'bg-gradient-to-br from-fuchsia-900 to-orange-900 border border-fuchsia-400/40 text-fuchsia-200',
+      'bio-luminescence':'bg-gradient-to-br from-emerald-900 to-teal-700 border border-emerald-300/50 text-emerald-100',
+      'starry-night':'bg-gradient-to-br from-indigo-900 to-blue-900 border border-indigo-400/40 text-indigo-200',
+      'galaxy':'bg-gradient-to-br from-purple-900 to-indigo-900 border border-purple-400/40 text-purple-200',
+      'nebula':'bg-gradient-to-br from-pink-900 to-purple-900 border border-pink-400/40 text-pink-200',
+      'sunset':'bg-gradient-to-br from-orange-800 to-rose-700 border border-orange-400/40 text-orange-100',
+      'royal':'bg-gradient-to-br from-purple-800 to-indigo-700 border border-purple-400/40 text-purple-100',
+      'candy':'bg-gradient-to-br from-pink-400 to-rose-400 border border-pink-200/50 text-white',
+      'steampunk':'bg-gradient-to-br from-amber-900 to-stone-800 border border-amber-600/50 text-amber-200',
+      'cyber-grid':'bg-black border border-cyan-500/60 text-cyan-300',
+      'warp-drive':'bg-gradient-to-br from-blue-950 to-indigo-900 border border-blue-400/40 text-blue-200',
+    };
+
+    // ── INITIAL DATA ─────────────────────────────────────────────────────────
+    const INIT_SETTINGS = {
+      language:'es', darkMode:true, showNews:true, showNewsImage:true,
+      newsSpeed:8, newsAutoScroll:true, newsHeightMultiplier:4,
+      pomodoroWorkTime:25, pomodoroBreakTime:5, openInNewTab:true,
+      geminiApiKey:'', groqApiKey:'', claudeApiKey:'', openRouterApiKey:'',
+      activeAiProvider:'gemini', activeAiModel:'gemini-2.0-flash',
+      neonIntensity:1.0, searchEngine:'google',
+      weatherCity:'Madrid', weatherLat:40.4168, weatherLon:-3.7038, weatherEnabled:true,
+      categoryOrder:['pinned','social','business','ai_models','dev','more_ia','web_tools','general'],
+      categorySizes:{social:1,ai:1,dev:1,general:1,extra:1,business:0.5,web:0.5}
+    };
+
+    const INIT_BUTTONS = [
+      {id:'1',title:'Gemini',url:'https://aistudio.google.com/',category:'AI Models',theme:'neon-blue',size:'standard',indicatorColor:'#00f0ff',pinned:true,subButtons:[]},
+      {id:'2',title:'ChatGPT',url:'https://chat.openai.com',category:'AI Models',theme:'glass-clear',size:'standard',indicatorColor:'#ff00ff',subButtons:[]},
+      {id:'3',title:'Claude',url:'https://claude.ai',category:'AI Models',theme:'minimal-light',size:'standard',indicatorColor:'#ffffff',subButtons:[]},
+      {id:'4',title:'DeepSeek',url:'https://chat.deepseek.com',category:'AI Models',theme:'neon-blue',size:'standard',indicatorColor:'#00ff9f',subButtons:[]},
+      {id:'5',title:'Grok AI',url:'https://x.com/i/grok',category:'AI Models',theme:'minimal-dark',size:'standard',indicatorColor:'#1a1a2e',subButtons:[]},
+      {id:'6',title:'Copilot',url:'https://copilot.microsoft.com',category:'AI Models',theme:'neon-green',size:'standard',indicatorColor:'#00ff00',subButtons:[]},
+      {id:'soc-fb',title:'Facebook',url:'https://facebook.com',category:'Social',socialNetwork:'facebook',theme:'minimal-dark',size:'small',indicatorColor:'#1877F2',subButtons:[]},
+      {id:'soc-wa',title:'WhatsApp',url:'https://web.whatsapp.com',category:'Social',socialNetwork:'whatsapp',theme:'minimal-dark',size:'small',indicatorColor:'#25D366',subButtons:[]},
+      {id:'soc-tg',title:'Telegram',url:'https://web.telegram.org',category:'Social',socialNetwork:'telegram',theme:'minimal-dark',size:'small',indicatorColor:'#0088cc',subButtons:[]},
+      {id:'soc-gm',title:'Gmail',url:'https://mail.google.com',category:'Social',socialNetwork:'gmail',theme:'minimal-dark',size:'small',indicatorColor:'#EA4335',subButtons:[]},
+      {id:'soc-yt',title:'YouTube',url:'https://youtube.com',category:'Social',socialNetwork:'youtube',theme:'minimal-dark',size:'small',indicatorColor:'#FF0000',subButtons:[]},
+      {id:'soc-li',title:'LinkedIn',url:'https://linkedin.com',category:'Social',socialNetwork:'linkedin',theme:'minimal-dark',size:'small',indicatorColor:'#0A66C2',subButtons:[]},
+      {id:'soc-tw',title:'X',url:'https://x.com',category:'Social',socialNetwork:'twitter',theme:'minimal-dark',size:'small',indicatorColor:'#000000',subButtons:[]},
+      {id:'soc-ig',title:'Instagram',url:'https://instagram.com',category:'Social',socialNetwork:'instagram',theme:'minimal-dark',size:'small',indicatorColor:'#E1306C',subButtons:[]},
+      {id:'soc-gh',title:'GitHub',url:'https://github.com',category:'Social',socialNetwork:'github',theme:'minimal-dark',size:'small',indicatorColor:'#ffffff',subButtons:[]},
+    ];
+
+    const INIT_FEEDS = [
+      {id:'1',name:'Xataka (ES)',url:'https://feeds.weblogssl.com/xataka2',enabled:true},
+      {id:'2',name:'Wired (EN)',url:'https://www.wired.com/feed/rss',enabled:true},
+    ];
+
+    // ── AI CALL ──────────────────────────────────────────────────────────────
+    const callAI = async (settings, prompt) => {
+      const {activeAiProvider:p, activeAiModel:m, geminiApiKey, groqApiKey, claudeApiKey, openRouterApiKey} = settings;
+      if (p==='gemini' && geminiApiKey) {
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${geminiApiKey}`,{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})
+        });
+        const d = await r.json();
+        return d.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      }
+      if (p==='groq' && groqApiKey) {
+        const r = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+          method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${groqApiKey}`},
+          body:JSON.stringify({model:m,messages:[{role:'user',content:prompt}]})
+        });
+        const d = await r.json();
+        return d.choices?.[0]?.message?.content || '';
+      }
+      if (p==='openrouter' && openRouterApiKey) {
+        const r = await fetch('https://openrouter.ai/api/v1/chat/completions',{
+          method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${openRouterApiKey}`},
+          body:JSON.stringify({model:m,messages:[{role:'user',content:prompt}]})
+        });
+        const d = await r.json();
+        return d.choices?.[0]?.message?.content || '';
+      }
+      if (p==='claude' && claudeApiKey) {
+        const r = await fetch('https://api.anthropic.com/v1/messages',{
+          method:'POST',headers:{'Content-Type':'application/json','x-api-key':claudeApiKey,'anthropic-version':'2023-06-01'},
+          body:JSON.stringify({model:m,max_tokens:1024,messages:[{role:'user',content:prompt}]})
+        });
+        const d = await r.json();
+        return d.content?.[0]?.text || '';
+      }
+      throw new Error('No API key configured');
+    };
+
+    // ── LOGO ─────────────────────────────────────────────────────────────────
+    const Logo = () => (
+      <div className="relative group cursor-pointer select-none">
+        <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-emerald-400 rounded-lg blur opacity-20 group-hover:opacity-80 transition duration-700"/>
+        <div className="relative flex items-center gap-2">
+          <svg width="36" height="36" viewBox="0 0 40 40" fill="none" className="animate-spin" style={{animationDuration:'12s'}}>
+            <circle cx="20" cy="20" r="18" stroke="url(#lg1)" strokeWidth="2" strokeDasharray="4 4"/>
+            <path d="M20 5L23 15H33L25 21L28 31L20 25L12 31L15 21L7 15H17L20 5Z" fill="url(#lg2)" className="animate-pulse"/>
+            <defs>
+              <linearGradient id="lg1" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stopColor="#06b6d4"/><stop offset="1" stopColor="#d946ef"/></linearGradient>
+              <linearGradient id="lg2" x1="20" y1="5" x2="20" y2="35" gradientUnits="userSpaceOnUse"><stop stopColor="#22d3ee"/><stop offset="1" stopColor="#ffffff"/></linearGradient>
+            </defs>
+          </svg>
+          <div className="flex flex-col">
+            <h1 className="text-xl font-display font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-fuchsia-300">NEXUS HUB</h1>
+            <span className="text-[9px] font-mono tracking-[0.3em] text-emerald-400 uppercase -mt-1 text-right">DUVI</span>
+          </div>
+        </div>
+      </div>
+    );
+
+    // ── SOCIAL ICON ──────────────────────────────────────────────────────────
+    const SocialIcon = ({net,size=22}) => {
+      const s = size;
+      const icons = {
+        youtube: <Youtube size={s} className="text-red-500"/>,
+        twitter: <Twitter size={s} className="text-white"/>,
+        instagram: <Instagram size={s} className="text-pink-500"/>,
+        linkedin: <Linkedin size={s} className="text-blue-500"/>,
+        github: <Github size={s} className="text-slate-400"/>,
+        facebook: <Facebook size={s} className="text-blue-600"/>,
+        whatsapp: <MessageSquareText size={s} className="text-green-500"/>,
+        telegram: <Send size={s} className="text-blue-400"/>,
+        gmail: <Mail size={s} className="text-red-400"/>,
+        tiktok: <Video size={s} className="text-cyan-400"/>,
+        discord: <MessageSquare size={s} className="text-indigo-400"/>,
+        twitch: <Tv size={s} className="text-purple-400"/>,
+      };
+      return icons[net] || <Cpu size={s} className="opacity-70"/>;
+    };
+
+    // ── FUTURISTIC BUTTON ────────────────────────────────────────────────────
+    const FButton = ({btn, settings, isEditing, onEdit, onDelete, onPin, onCatChange, onMove}) => {
+      const themeClass = THEMES[btn.theme] || THEMES['neon-blue'];
+      let szClass = 'h-28 col-span-1';
+      if (btn.size==='small') szClass='h-16 col-span-1';
+      if (btn.size==='wide') szClass='h-28 col-span-2';
+      if (btn.size==='large') szClass='h-56 col-span-2 row-span-2';
+      const isSocial = btn.socialNetwork && btn.socialNetwork!=='none';
+      const getFav = url => { try{return `https://www.google.com/s2/favicons?sz=64&domain=${new URL(url).hostname}`}catch(e){return null} };
+
+      return (
+        <div className={`relative group ${szClass} select-none`}>
+          <a
+            href={isEditing ? undefined : btn.url}
+            target={settings.openInNewTab?'_blank':'_self'}
+            rel="noopener noreferrer"
+            onClick={e=>{ if(isEditing){e.preventDefault();onEdit(btn);} }}
+            className={`block w-full h-full rounded-xl p-3 transition-all flex flex-col items-center justify-center gap-1 overflow-hidden ${themeClass} ${btn.pinned?'ring-2 ring-yellow-400 ring-offset-1 ring-offset-slate-900':''}`}
+          >
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"/>
+            <div className="absolute top-2 left-2 w-2 h-2 rounded-full opacity-50" style={{backgroundColor:btn.indicatorColor||'#00f0ff'}}/>
+            <div className="relative z-10 flex flex-col items-center text-center pointer-events-none">
+              {isSocial ? (
+                <>
+                  <SocialIcon net={btn.socialNetwork} size={btn.size==='small'?18:24}/>
+                  {btn.size!=='small' && <span className="text-[10px] font-bold mt-1 truncate max-w-full px-1">{btn.title}</span>}
+                </>
+              ) : (
+                <>
+                  {btn.url && btn.url!=='https://' && <img src={getFav(btn.url)||''} alt="" className="w-6 h-6 object-contain rounded mb-1" onError={e=>e.target.style.display='none'}/>}
+                  <span className="font-display font-bold text-sm text-center leading-tight">{btn.title}</span>
+                  {btn.size!=='small' && <span className="text-[9px] opacity-50 uppercase tracking-widest mt-0.5">{catLabel(btn.category, settings.language)}</span>}
+                </>
+              )}
+            </div>
+          </a>
+          {isEditing && (
+            <>
+              <div className="absolute -top-3 -right-3 z-50 flex gap-1">
+                <button onClick={e=>{e.stopPropagation();onCatChange(btn.id);}} className="bg-fuchsia-600 text-white p-1 rounded hover:bg-fuchsia-500"><Tag size={12}/></button>
+                <button onClick={e=>{e.stopPropagation();onPin(btn.id);}} className={`p-1 rounded text-white ${btn.pinned?'bg-yellow-500':'bg-slate-600 hover:bg-yellow-500'}`}>{btn.pinned?<PinOff size={12}/>:<Pin size={12}/>}</button>
+                <button onClick={e=>{e.stopPropagation();onDelete(btn.id);}} className="bg-red-500 text-white p-1 rounded hover:bg-red-600"><Trash2 size={12}/></button>
+              </div>
+              <div className="absolute inset-0 border-2 border-dashed border-white/30 rounded-xl pointer-events-none"/>
+              <button onClick={e=>{e.stopPropagation();onMove(btn.id,'up');}} className="absolute -top-2 left-1/2 -translate-x-1/2 z-40 bg-slate-900/90 text-white p-0.5 rounded border border-white/20 hover:bg-cyan-600"><ChevronUp size={12}/></button>
+              <button onClick={e=>{e.stopPropagation();onMove(btn.id,'down');}} className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-40 bg-slate-900/90 text-white p-0.5 rounded border border-white/20 hover:bg-cyan-600"><ChevronDown size={12}/></button>
+              <button onClick={e=>{e.stopPropagation();onMove(btn.id,'left');}} className="absolute -left-2 top-1/2 -translate-y-1/2 z-40 bg-slate-900/90 text-white p-0.5 rounded border border-white/20 hover:bg-cyan-600"><ChevronLeft size={12}/></button>
+              <button onClick={e=>{e.stopPropagation();onMove(btn.id,'right');}} className="absolute -right-2 top-1/2 -translate-y-1/2 z-40 bg-slate-900/90 text-white p-0.5 rounded border border-white/20 hover:bg-cyan-600"><ChevronRight size={12}/></button>
+            </>
+          )}
+        </div>
+      );
+    };
+
+    // ── POMODORO ─────────────────────────────────────────────────────────────
+    const Pomodoro = ({settings, t, isOpen, onClose}) => {
+      const [timeLeft, setTimeLeft] = useState(settings.pomodoroWorkTime*60);
+      const [active, setActive] = useState(false);
+      const [mode, setMode] = useState('work');
+      useEffect(()=>{ if(!active) setTimeLeft(mode==='work'?settings.pomodoroWorkTime*60:settings.pomodoroBreakTime*60); },[settings.pomodoroWorkTime,settings.pomodoroBreakTime,mode,active]);
+      useEffect(()=>{ let iv; if(active&&timeLeft>0) iv=setInterval(()=>setTimeLeft(p=>p-1),1000); else if(timeLeft===0){setActive(false);setMode(m=>m==='work'?'break':'work');} return()=>clearInterval(iv); },[active,timeLeft,mode]);
+      if(!isOpen) return null;
+      const fmt=s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+      return (
+        <div className="absolute top-16 right-4 z-50 w-64 bg-slate-900 border border-cyan-500/50 rounded-xl shadow-2xl p-4 animate-fade-in">
+          <div className="flex justify-between items-center mb-4"><h3 className="font-display font-bold text-cyan-400 uppercase tracking-widest text-sm">{t.pomodoro}</h3><button onClick={onClose} className="text-slate-400 hover:text-white"><X size={16}/></button></div>
+          <div className="text-center mb-4">
+            <div className={`text-5xl font-mono font-bold mb-2 ${active?'text-white animate-pulse':'text-slate-400'}`}>{fmt(timeLeft)}</div>
+            <span className={`text-xs uppercase px-2 py-1 rounded ${mode==='work'?'bg-cyan-900 text-cyan-300':'bg-green-900 text-green-300'}`}>{mode==='work'?t.work:t.break}</span>
+          </div>
+          <div className="flex justify-center gap-3">
+            <button onClick={()=>setActive(!active)} className={`p-3 rounded-full ${active?'bg-yellow-500 text-black':'bg-cyan-600 text-white'} hover:opacity-90`}>{active?<Pause size={20}/>:<Play size={20}/>}</button>
+            <button onClick={()=>{setActive(false);setMode('work');setTimeLeft(settings.pomodoroWorkTime*60);}} className="p-3 rounded-full bg-slate-700 text-white hover:bg-slate-600"><RotateCcw size={20}/></button>
+          </div>
+        </div>
+      );
+    };
+
+    // ── AI CHAT MODAL ────────────────────────────────────────────────────────
+    const ChatModal = ({settings, t, isOpen, onClose}) => {
+      const [msgs, setMsgs] = useState([{role:'model',text:'Greetings! I am the NEXUS AI Assistant.'}]);
+      const [input, setInput] = useState('');
+      const [loading, setLoading] = useState(false);
+      const send = async() => {
+        if(!input.trim()) return;
+        const txt = input; setInput(''); setLoading(true);
+        setMsgs(p=>[...p,{role:'user',text:txt}]);
+        try {
+          const lang = settings.language==='en'?'English':settings.language==='zh'?'Chinese':'Spanish';
+          const resp = await callAI(settings, `Reply in ${lang} concisely: ${txt}`);
+          setMsgs(p=>[...p,{role:'model',text:resp}]);
+        } catch(e) {
+          setMsgs(p=>[...p,{role:'model',text:'⚠️ '+e.message}]);
+        }
+        setLoading(false);
+      };
+      if(!isOpen) return null;
+      return (
+        <div className="fixed bottom-20 right-4 w-80 md:w-96 h-[480px] bg-slate-900/95 border border-cyan-500/30 rounded-2xl shadow-2xl flex flex-col z-50 backdrop-blur-md animate-fade-in">
+          <div className="p-4 border-b border-white/10 flex justify-between items-center bg-slate-800/50 rounded-t-2xl">
+            <div className="flex items-center gap-2"><Cpu className="text-cyan-400" size={18}/><h3 className="font-display font-bold text-white">{t.chat}</h3></div>
+            <button onClick={onClose} className="text-slate-400 hover:text-white"><X size={18}/></button>
+          </div>
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+            {msgs.map((m,i)=>(
+              <div key={i} className={`flex ${m.role==='user'?'justify-end':'justify-start'}`}>
+                <div className={`max-w-[80%] p-3 rounded-xl text-sm ${m.role==='user'?'bg-cyan-600 text-white':'bg-slate-800 text-slate-300 border border-slate-700'}`}>{m.text}</div>
+              </div>
+            ))}
+            {loading && <div className="flex justify-start"><div className="bg-slate-800 p-3 rounded-xl text-sm border border-slate-700 animate-pulse text-cyan-400">{t.chatThinking}</div></div>}
+          </div>
+          <div className="p-3 border-t border-white/10 flex gap-2 bg-slate-800/50 rounded-b-2xl">
+            <input value={input} onChange={e=>setInput(e.target.value)} onKeyPress={e=>e.key==='Enter'&&send()} placeholder={t.chatPlaceholder} className="flex-1 bg-slate-900 border border-slate-700 rounded-full px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none"/>
+            <button onClick={send} className="p-2 bg-cyan-600 rounded-full text-white hover:bg-cyan-500"><Send size={16}/></button>
+          </div>
+        </div>
+      );
+    };
+
+    // ── WEATHER WIDGET ───────────────────────────────────────────────────────
+    const WeatherWidget = ({settings, t}) => {
+      const [weather, setWeather] = useState(null);
+      useEffect(()=>{
+        if(!settings.weatherEnabled||!settings.weatherLat) return;
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${settings.weatherLat}&longitude=${settings.weatherLon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`)
+          .then(r=>r.json()).then(d=>setWeather({
+            temp:Math.round(d.current.temperature_2m),
+            wind:Math.round(d.current.wind_speed_10m),
+            hum:d.current.relative_humidity_2m,
+            tMax:Math.round(d.daily.temperature_2m_max[1]),
+            tMin:Math.round(d.daily.temperature_2m_min[1])
+          })).catch(()=>{});
+      },[settings.weatherLat,settings.weatherLon,settings.weatherEnabled]);
+      if(!weather) return null;
+      return (
+        <div className="bg-slate-900/60 border border-white/10 rounded-2xl p-4 flex items-center gap-4 backdrop-blur-md hover:border-cyan-500/50 transition-all">
+          <div className="flex flex-col">
+            <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-tighter">{settings.weatherCity}</span>
+            <div className="flex items-center gap-2"><Thermometer className="text-white" size={22}/><span className="text-3xl font-display font-bold text-white">{weather.temp}°</span></div>
+          </div>
+          <div className="h-10 w-px bg-white/10"/>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2 text-slate-300"><Wind size={13} className="text-cyan-400"/><span className="text-xs font-mono">{weather.wind} km/h</span></div>
+            <div className="flex items-center gap-2 text-slate-300"><Droplets size={13} className="text-blue-400"/><span className="text-xs font-mono">{weather.hum}%</span></div>
+          </div>
+          <div className="h-10 w-px bg-white/10"/>
+          <div className="flex flex-col">
+            <span className="text-[9px] text-slate-500 uppercase font-bold">{t.tmw}</span>
+            <div className="flex gap-2"><span className="text-sm font-bold text-white">{weather.tMax}°</span><span className="text-sm text-slate-500">{weather.tMin}°</span></div>
+          </div>
+        </div>
+      );
+    };
+
+    // ── VOICE/CHAT WIDGET ────────────────────────────────────────────────────
+    const ChatWidget = ({settings, t}) => {
+      const [open, setOpen] = useState(false);
+      const [input, setInput] = useState('');
+      const [resp, setResp] = useState('');
+      const [busy, setBusy] = useState(false);
+      const send = async()=>{
+        if(!input.trim()) return;
+        setBusy(true);
+        try{ const r=await callAI(settings,`Be brief. Reply in ${settings.language==='en'?'English':settings.language==='zh'?'Chinese':'Spanish'}: ${input}`); setResp(r); }
+        catch(e){ setResp('⚠️ '+e.message); }
+        setBusy(false);
+      };
+      return (
+        <div className="flex-1 flex gap-4">
+          <button onClick={()=>setOpen(true)} className="flex-1 group relative px-6 py-4 bg-slate-900 border border-emerald-500/30 rounded-2xl flex items-center gap-3 transition-all hover:border-emerald-400 active:scale-95 select-none">
+            <Keyboard size={24} className="text-emerald-400"/>
+            <div className="flex flex-col items-start text-left">
+              <span className="text-sm font-bold text-white tracking-wide">{t.chatBtn}</span>
+              <span className="text-[10px] text-slate-400">{t.chatSubtitle}</span>
+            </div>
+          </button>
+          {open&&(
+            <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 animate-fade-in">
+              <div className="bg-slate-900 border border-cyan-500/50 w-full max-w-md rounded-2xl p-4 shadow-2xl">
+                <button onClick={()=>setOpen(false)} className="absolute top-3 right-3 text-slate-400 hover:text-white"><X size={20}/></button>
+                <h3 className="text-cyan-400 font-bold mb-4 flex items-center gap-2"><MessageSquare size={18}/> {t.chat}</h3>
+                <div className="min-h-[120px] max-h-[280px] overflow-y-auto bg-slate-800/50 rounded-lg p-3 mb-4 border border-slate-700 custom-scrollbar">
+                  {busy?<div className="animate-pulse text-slate-400">{t.chatThinking}</div>:<p className="text-white text-sm leading-relaxed">{resp||t.chatReady}</p>}
+                </div>
+                <div className="flex gap-2">
+                  <input value={input} onChange={e=>setInput(e.target.value)} onKeyPress={e=>e.key==='Enter'&&send()} placeholder={t.chatPlaceholder} className="flex-1 bg-slate-950 border border-slate-700 rounded-full px-4 py-3 text-white focus:border-cyan-500 outline-none text-sm"/>
+                  <button onClick={send} className="p-3 bg-cyan-600 rounded-full text-white hover:bg-cyan-500"><ArrowUp size={20}/></button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // ── NEWS SLIDESHOW ───────────────────────────────────────────────────────
+    const NewsSlideshow = ({feeds, settings, t, onHeightChange}) => {
+      const [news, setNews] = useState([]);
+      const [idx, setIdx] = useState(0);
+      const [loading, setLoading] = useState(true);
+      const [overlay, setOverlay] = useState(null);
+      const [hovering, setHovering] = useState(false);
+      const timer = useRef(null);
+
+      useEffect(()=>{
+        setLoading(true);
+        const enabled = feeds.filter(f=>f.enabled);
+        if(!enabled.length){setNews([]);setLoading(false);return;}
+        Promise.all(enabled.map(f=>
+          fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(f.url)}`)
+            .then(r=>r.json()).then(d=>d.status==='ok'?d.items.slice(0,10).map(i=>({
+              title:i.title,link:i.link,source:f.name,pubDate:i.pubDate,
+              snippet:(i.description||'').replace(/<[^>]*>/g,'').slice(0,250),
+              thumb:i.enclosure?.link||i.thumbnail
+            })):[]).catch(()=>[])
+        )).then(all=>{
+          const merged=[].concat(...all).sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));
+          setNews(merged.slice(0,40));setLoading(false);
+        });
+      },[feeds]);
+
+      useEffect(()=>{
+        if(settings.newsAutoScroll&&news.length&&!hovering&&!overlay){
+          timer.current=setInterval(()=>setIdx(p=>(p+1)%news.length),settings.newsSpeed*1000);
+        } else clearInterval(timer.current);
+        return()=>clearInterval(timer.current);
+      },[settings.newsAutoScroll,settings.newsSpeed,news,hovering,overlay]);
+
+      if(!settings.showNews) return null;
+      const h = `${4*settings.newsHeightMultiplier}rem`;
+
+      return (
+        <div className="w-full bg-slate-900/80 border-y border-slate-700 backdrop-blur-md flex items-center relative overflow-hidden group transition-all"
+          style={{height:h}} onMouseEnter={()=>setHovering(true)} onMouseLeave={()=>setHovering(false)}>
+          {overlay&&(
+            <div className="absolute inset-0 z-50 bg-slate-900/97 p-6 flex flex-col items-center justify-center text-center">
+              <button onClick={()=>setOverlay(null)} className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white bg-slate-800 rounded-full"><X size={18}/></button>
+              <h3 className="text-lg font-display font-bold text-cyan-400 mb-3">{overlay.title}</h3>
+              <div className="text-slate-300 text-sm leading-relaxed max-w-3xl overflow-y-auto max-h-full custom-scrollbar">{overlay.content}</div>
+            </div>
+          )}
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20 bg-slate-800/80 p-1 rounded-full">
+            <span className="text-[9px] text-slate-400 font-mono">Size</span>
+            <input type="range" min="1" max="6" step="0.5" value={settings.newsHeightMultiplier} onChange={e=>onHeightChange(parseFloat(e.target.value))} className="h-20 w-1 appearance-none rounded-full outline-none accent-cyan-400" style={{writingMode:'vertical-lr',direction:'rtl'}}/>
+          </div>
+          {loading?(
+            <div className="flex items-center gap-2 text-slate-400 animate-pulse mx-auto"><Rss size={16}/><span className="text-sm">{t.loadingNews}</span></div>
+          ):news.length?(
+            <>
+              <button onClick={()=>setIdx(p=>(p-1+news.length)%news.length)} className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-slate-800/50 hover:bg-cyan-600/50 text-white opacity-0 group-hover:opacity-100"><ChevronLeft size={18}/></button>
+              <div className="w-full h-full flex items-center px-10 md:px-16 gap-6 relative z-10">
+                {settings.showNewsImage&&news[idx]?.thumb&&(
+                  <div className="hidden md:block h-4/5 aspect-video shrink-0 rounded-lg overflow-hidden border border-white/10 shadow-lg">
+                    <img src={news[idx].thumb} alt="" className="w-full h-full object-cover"/>
+                  </div>
+                )}
+                <div className="flex-1 flex flex-col gap-2 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <button onClick={async()=>{
+                      setOverlay({title:'AI Summary',content:t.chatThinking});
+                      try{const r=await callAI(settings,`Summarize in ${settings.language==='en'?'English':settings.language==='zh'?'Chinese':'Spanish'}: "${news[idx].title}"`);setOverlay({title:'AI Summary',content:r});}
+                      catch(e){setOverlay({title:'Error',content:e.message});}
+                    }} className="p-1.5 rounded-full bg-slate-700 hover:bg-green-600 text-white shrink-0"><FileText size={13}/></button>
+                    <button onClick={()=>{ if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance(news[idx].title);window.speechSynthesis.speak(u);} }} className="p-1.5 rounded-full bg-slate-700 hover:bg-cyan-600 text-white shrink-0"><Mic size={13}/></button>
+                  </div>
+                  <a href={news[idx]?.link} target="_blank" rel="noopener noreferrer" className={`font-medium text-white hover:text-cyan-400 transition-colors flex items-start gap-2 ${settings.newsHeightMultiplier>=3?'text-lg':'text-sm'} leading-tight`}>
+                    {news[idx]?.title}<ExternalLink size={12} className="opacity-50 shrink-0 mt-0.5"/>
+                  </a>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-cyan-900 text-cyan-300 uppercase tracking-wider">{news[idx]?.source}</span>
+                    <span className="text-[10px] text-slate-400">{news[idx]?.pubDate?new Date(news[idx].pubDate).toLocaleDateString():''}</span>
+                  </div>
+                  {settings.newsHeightMultiplier>=3&&<p className="text-slate-400 text-xs line-clamp-2">{news[idx]?.snippet}</p>}
+                </div>
+              </div>
+              <button onClick={()=>setIdx(p=>(p+1)%news.length)} className="absolute right-10 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-slate-800/50 hover:bg-cyan-600/50 text-white opacity-0 group-hover:opacity-100"><ChevronRight size={18}/></button>
+            </>
+          ):<div className="text-slate-500 text-sm mx-auto">{t.noSignal}</div>}
+        </div>
+      );
+    };
+
+    // ── ORGANIZER ────────────────────────────────────────────────────────────
+    const Organizer = ({settings, t, isOpen, onClose}) => {
+      const [tab, setTab] = useState('reminders');
+      const [notes, setNotes] = useState(()=>load('nexus_notes',[]));
+      const [rems, setRems] = useState(()=>load('nexus_reminders',[]));
+      const [rTitle,setRTitle]=useState('');const [rDate,setRDate]=useState('');const [rTime,setRTime]=useState('');
+      const COLS=['bg-yellow-200','bg-cyan-200','bg-pink-200','bg-green-200','bg-purple-200'];
+      useEffect(()=>save('nexus_notes',notes),[notes]);
+      useEffect(()=>save('nexus_reminders',rems),[rems]);
+      if(!isOpen) return null;
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-4xl h-[80vh] rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl flex overflow-hidden animate-scale-up">
+            <div className="w-56 bg-slate-950 border-r border-slate-800 flex flex-col p-4 gap-2">
+              <h2 className="text-xl font-display font-bold mb-4 flex items-center gap-2 text-cyan-500"><Calendar size={20}/>{t.organizer}</h2>
+              <button onClick={()=>setTab('reminders')} className={`p-3 rounded-lg text-left flex items-center gap-3 transition-colors text-sm font-bold ${tab==='reminders'?'bg-cyan-600 text-white':'text-slate-400 hover:bg-slate-800'}`}><Bell size={16}/>{t.reminders}</button>
+              <button onClick={()=>setTab('notes')} className={`p-3 rounded-lg text-left flex items-center gap-3 transition-colors text-sm font-bold ${tab==='notes'?'bg-yellow-500 text-black':'text-slate-400 hover:bg-slate-800'}`}><Clock size={16}/>{t.notes}</button>
+              <div className="flex-1"/>
+              <button onClick={onClose} className="p-3 text-slate-400 hover:text-white flex items-center gap-2 text-sm"><X size={16}/>{t.cancel}</button>
+            </div>
+            <div className="flex-1 p-6 overflow-y-auto custom-scrollbar">
+              {tab==='notes'&&(
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-white">{t.notes}</h3>
+                    <button onClick={()=>setNotes(p=>[...p,{id:Date.now().toString(),content:'',color:COLS[Math.floor(Math.random()*COLS.length)]}])} className="bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded-full font-bold flex items-center gap-2 text-sm"><Plus size={16}/>{t.newNoteBtn}</button>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    {notes.map(n=>(
+                      <div key={n.id} className={`${n.color} p-3 rounded-lg shadow-lg hover:-translate-y-1 transition-transform relative group h-40 flex flex-col`}>
+                        <textarea className="w-full flex-1 bg-transparent resize-none outline-none text-slate-800 text-sm placeholder-slate-600/50" value={n.content} onChange={e=>setNotes(p=>p.map(x=>x.id===n.id?{...x,content:e.target.value}:x))} placeholder={t.writeHere}/>
+                        <button onClick={()=>setNotes(p=>p.filter(x=>x.id!==n.id))} className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-500"><Trash2 size={14}/></button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {tab==='reminders'&&(
+                <div className="space-y-4">
+                  <div className="p-4 rounded-xl border bg-slate-800/50 border-slate-700">
+                    <h4 className="text-xs uppercase tracking-wider text-cyan-500 mb-3 font-bold">{t.newReminder}</h4>
+                    <div className="flex gap-3 items-end flex-wrap">
+                      <div className="flex-1 min-w-[120px]"><label className="text-xs text-slate-500">{t.reminderTitle}</label><input value={rTitle} onChange={e=>setRTitle(e.target.value)} className="w-full bg-transparent border-b border-slate-600 focus:border-cyan-500 outline-none py-1 text-slate-300 text-sm" placeholder={t.reminderTitle}/></div>
+                      <div><label className="text-xs text-slate-500">{t.reminderDate}</label><input type="date" value={rDate} onChange={e=>setRDate(e.target.value)} className="bg-transparent border-b border-slate-600 text-slate-300 text-sm py-1"/></div>
+                      <div><label className="text-xs text-slate-500">{t.reminderTime}</label><input type="time" value={rTime} onChange={e=>setRTime(e.target.value)} className="bg-transparent border-b border-slate-600 text-slate-300 text-sm py-1"/></div>
+                      <button onClick={()=>{if(!rTitle||!rDate||!rTime)return;setRems(p=>[...p,{id:Date.now().toString(),title:rTitle,date:`${rDate}T${rTime}`,completed:false}]);setRTitle('');}} className="bg-cyan-600 hover:bg-cyan-500 p-2 rounded-lg text-white"><Plus size={18}/></button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {rems.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(r=>{
+                      const past=new Date(r.date)<new Date();
+                      return(
+                        <div key={r.id} className={`flex items-center gap-3 p-3 rounded-lg border ${r.completed?'opacity-50':''} bg-slate-900 border-slate-800`}>
+                          <button onClick={()=>setRems(p=>p.map(x=>x.id===r.id?{...x,completed:!x.completed}:x))} className={`p-1 rounded-full border ${r.completed?'bg-green-500 border-green-500':'border-slate-500 hover:border-cyan-500'}`}><Check size={12} className={`text-white ${r.completed?'opacity-100':'opacity-0'}`}/></button>
+                          <div className="flex-1">
+                            <div className={`text-sm font-medium ${r.completed?'line-through text-slate-500':'text-white'}`}>{r.title}</div>
+                            <div className={`text-xs flex gap-2 ${past&&!r.completed?'text-red-400 font-bold':'text-slate-500'}`}>
+                              <span>{new Date(r.date).toLocaleDateString()}</span><span>{new Date(r.date).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>
+                            </div>
+                          </div>
+                          <button onClick={()=>setRems(p=>p.filter(x=>x.id!==r.id))} className="text-slate-600 hover:text-red-500"><Trash2 size={14}/></button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ── SETTINGS MODAL ───────────────────────────────────────────────────────
+    const SettingsModal = ({isOpen, onClose, settings, onSaveSettings, feeds, onSaveFeeds, buttons, onSaveButtons, t, onResetAll}) => {
+      const [ls, setLs] = useState(settings);
+      const [lf, setLf] = useState(feeds);
+      const [lb, setLb] = useState(buttons);
+      const [tab, setTab] = useState('general');
+      const [feedName, setFeedName] = useState('');
+      const [feedUrl, setFeedUrl] = useState('');
+      const [geoRes, setGeoRes] = useState([]);
+      const [geoLoad, setGeoLoad] = useState(false);
+      useEffect(()=>{ if(isOpen){setLs(settings);setLf(feeds);setLb(buttons);} },[isOpen,settings,feeds,buttons]);
+      if(!isOpen) return null;
+      const hc=(k,v)=>setLs(p=>({...p,[k]:v}));
+      const lt = T[ls.language]||T.es; // live translation as user changes language
+      const lookupCity=async()=>{
+        setGeoLoad(true);
+        try{const r=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(ls.weatherCity)}&count=5&language=es&format=json`);const d=await r.json();setGeoRes(d.results||[]);}catch(e){}
+        setGeoLoad(false);
+      };
+      const handleSave=()=>{ onSaveSettings(ls);onSaveFeeds(lf);onSaveButtons(lb);onClose(); };
+      const TABS=[
+        {id:'general',label:lt.tabSystem,icon:SettingsIcon},
+        {id:'layout',label:lt.layoutOrder,icon:Layout},
+        {id:'weather',label:lt.weather,icon:CloudSun},
+        {id:'keys',label:lt.apiKeys,icon:Zap},
+        {id:'rss',label:lt.tabRss,icon:Database},
+        {id:'guide',label:lt.guide,icon:BookOpen},
+        {id:'data',label:lt.tabData,icon:Database},
+      ];
+      const moveCat=(i,dir)=>{
+        const o=[...ls.categoryOrder];const ti=dir==='up'?i-1:i+1;
+        if(ti<0||ti>=o.length)return;[o[i],o[ti]]=[o[ti],o[i]];hc('categoryOrder',o);
+      };
+      const getCatLabel=k=>({ pinned:lt.pinned,social:lt.socials,business:lt.business,ai_models:catLabel('AI Models',ls.language),dev:catLabel('Development',ls.language),more_ia:catLabel('More IA Tools',ls.language),web_tools:lt.webTools,general:lt.general })[k]||k;
+
+      return (
+        <div className="fixed inset-0 z-[100] flex justify-end bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-slate-900 border-l border-cyan-500/30 w-full max-w-2xl h-full shadow-2xl flex flex-col animate-slide-in-right">
+            <div className="flex justify-between items-center p-5 border-b border-slate-800">
+              <h2 className="text-xl font-display font-bold text-white flex items-center gap-2"><SettingsIcon className="text-cyan-400" size={20}/>{lt.settings}</h2>
+              <button onClick={onClose} className="text-slate-400 hover:text-white"><X size={22}/></button>
+            </div>
+            <div className="flex flex-1 overflow-hidden">
+              <div className="w-40 bg-slate-950 border-r border-slate-800 flex flex-col p-2 gap-1 overflow-y-auto">
+                {TABS.map(tab2=>(
+                  <button key={tab2.id} onClick={()=>setTab(tab2.id)} className={`text-left px-3 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center gap-2 ${tab===tab2.id?'bg-cyan-900/30 text-cyan-400 border border-cyan-500/30':'text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}>
+                    <tab2.icon size={13}/>{tab2.label}
+                  </button>
+                ))}
+              </div>
+              <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-slate-900 custom-scrollbar">
+
+                {/* GENERAL */}
+                {tab==='general'&&(
+                  <div className="space-y-5 animate-fade-in">
+                    <h3 className="text-base font-bold text-white border-b border-white/10 pb-2">{lt.systemCore}</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-slate-300">{lt.langLabel}</span>
+                        <div className="flex gap-1.5">
+                          {[{code:'es',flag:'🇪🇸',label:'ES'},{code:'en',flag:'🇺🇸',label:'EN'},{code:'zh',flag:'🇨🇳',label:'中'}].map(l=>(
+                            <button key={l.code} onClick={()=>hc('language',l.code)} className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all border ${ls.language===l.code?'bg-cyan-600 border-cyan-400 text-white shadow-[0_0_10px_rgba(0,240,255,0.3)]':'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-500'}`}>
+                              <span className="text-base leading-none">{l.flag}</span><span>{l.label}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between"><span className="text-sm text-slate-300">{lt.searchEngine}</span>
+                        <select value={ls.searchEngine} onChange={e=>hc('searchEngine',e.target.value)} className="bg-slate-800 border border-slate-700 text-white rounded px-2 py-1 text-xs outline-none">
+                          <option value="google">Google</option><option value="bing">Bing</option><option value="duckduckgo">DuckDuckGo</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center justify-between"><span className="text-sm text-slate-300">{lt.neonIntensity}</span><input type="range" min="0" max="2" step="0.1" value={ls.neonIntensity} onChange={e=>hc('neonIntensity',parseFloat(e.target.value))} className="accent-cyan-400 w-28"/></div>
+                      <div className="flex items-center justify-between"><span className="text-sm text-slate-300">{lt.openNewTab}</span><input type="checkbox" checked={ls.openInNewTab} onChange={e=>hc('openInNewTab',e.target.checked)} className="accent-cyan-400 w-5 h-5"/></div>
+                      <div className="flex items-center justify-between"><span className="text-sm text-slate-300">{lt.showNewsLabel}</span><input type="checkbox" checked={ls.showNews} onChange={e=>hc('showNews',e.target.checked)} className="accent-cyan-400 w-5 h-5"/></div>
+                    </div>
+                  </div>
+                )}
+
+                {/* LAYOUT */}
+                {tab==='layout'&&(
+                  <div className="space-y-4 animate-fade-in">
+                    <h3 className="text-base font-bold text-white border-b border-white/10 pb-2 flex items-center gap-2"><Layout size={16} className="text-cyan-400"/>{lt.reorderModules}</h3>
+                    <div className="space-y-2">
+                      {ls.categoryOrder.map((k,i)=>(
+                        <div key={k} className="bg-slate-800/80 border border-white/5 rounded-xl p-3 flex items-center justify-between group hover:border-cyan-500/30 transition-all">
+                          <div className="flex items-center gap-3"><GripVertical size={18} className="text-slate-600 group-hover:text-cyan-500"/><span className="text-sm font-bold text-slate-200">{getCatLabel(k)}</span></div>
+                          <div className="flex gap-1">
+                            <button disabled={i===0} onClick={()=>moveCat(i,'up')} className="p-1.5 bg-slate-900 rounded text-slate-400 hover:text-white hover:bg-cyan-600 disabled:opacity-20"><ChevronUp size={16}/></button>
+                            <button disabled={i===ls.categoryOrder.length-1} onClick={()=>moveCat(i,'down')} className="p-1.5 bg-slate-900 rounded text-slate-400 hover:text-white hover:bg-cyan-600 disabled:opacity-20"><ChevronDown size={16}/></button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* WEATHER */}
+                {tab==='weather'&&(
+                  <div className="space-y-4 animate-fade-in">
+                    <h3 className="text-base font-bold text-white flex items-center gap-2"><CloudSun size={16}/> {lt.atmosphereControl}</h3>
+                    <div className="space-y-3 bg-slate-800/30 p-4 rounded-xl border border-white/5">
+                      <div className="flex gap-2">
+                        <input value={ls.weatherCity} onChange={e=>hc('weatherCity',e.target.value)} className="flex-1 bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-cyan-500 outline-none" placeholder={lt.weatherPlaceholder}/>
+                        <button onClick={lookupCity} disabled={geoLoad} className="bg-cyan-600 hover:bg-cyan-500 text-white px-3 rounded-lg disabled:opacity-50">{geoLoad?<RotateCcw size={18} className="animate-spin"/>:<MapPin size={18}/>}</button>
+                      </div>
+                      {geoRes.length>0&&(
+                        <div className="bg-slate-900 border border-slate-700 rounded-lg p-2 max-h-36 overflow-y-auto custom-scrollbar">
+                          {geoRes.map(c=>(
+                            <button key={`${c.latitude}-${c.longitude}`} onClick={()=>{hc('weatherCity',c.name);hc('weatherLat',c.latitude);hc('weatherLon',c.longitude);setGeoRes([]);}} className="w-full text-left p-2 hover:bg-cyan-900/40 text-xs text-slate-300 rounded">
+                              {c.name}, {c.country}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between"><span className="text-sm text-slate-300">{lt.weatherEnabled}</span><input type="checkbox" checked={ls.weatherEnabled} onChange={e=>hc('weatherEnabled',e.target.checked)} className="accent-cyan-400 w-5 h-5"/></div>
+                    </div>
+                  </div>
+                )}
+
+                {/* API KEYS */}
+                {tab==='keys'&&(
+                  <div className="space-y-4 animate-fade-in">
+                    <h3 className="text-base font-bold text-white border-b border-white/10 pb-2 flex items-center gap-2"><Zap size={16} className="text-cyan-400"/>{lt.apiTabTitle}</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] text-slate-500 uppercase font-bold block mb-1">{lt.apiProvider}</label>
+                        <select value={ls.activeAiProvider} onChange={e=>{const p=e.target.value;const def={gemini:'gemini-2.0-flash',groq:'llama-3.3-70b-versatile',claude:'claude-3-5-sonnet-20241022',openrouter:'openai/gpt-4o'};hc('activeAiProvider',p);hc('activeAiModel',def[p]||'');}} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none focus:border-cyan-500">
+                          <option value="gemini">🟦 Google Gemini</option>
+                          <option value="groq">⚡ Groq</option>
+                          <option value="claude">🟠 Anthropic Claude</option>
+                          <option value="openrouter">🌐 OpenRouter</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-500 uppercase font-bold block mb-1">{lt.apiActiveModel}</label>
+                        <select value={ls.activeAiModel} onChange={e=>hc('activeAiModel',e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none focus:border-cyan-500">
+                          {ls.activeAiProvider==='gemini'&&<><option value="gemini-2.0-flash">gemini-2.0-flash ⚡</option><option value="gemini-1.5-pro">gemini-1.5-pro</option><option value="gemini-1.5-flash">gemini-1.5-flash</option><option value="gemini-1.0-pro">gemini-1.0-pro</option></>}
+                          {ls.activeAiProvider==='groq'&&<><option value="llama-3.3-70b-versatile">llama-3.3-70b ⚡</option><option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option><option value="mixtral-8x7b-32768">mixtral-8x7b</option><option value="gemma2-9b-it">gemma2-9b-it</option></>}
+                          {ls.activeAiProvider==='claude'&&<><option value="claude-3-5-sonnet-20241022">claude-3-5-sonnet ✦</option><option value="claude-3-5-haiku-20241022">claude-3-5-haiku</option><option value="claude-3-opus-20240229">claude-3-opus</option><option value="claude-3-haiku-20240307">claude-3-haiku</option></>}
+                          {ls.activeAiProvider==='openrouter'&&<><option value="openai/gpt-4o">openai/gpt-4o ✦</option><option value="openai/gpt-4o-mini">gpt-4o-mini</option><option value="google/gemini-2.0-flash-exp">gemini-2.0-flash-exp</option><option value="anthropic/claude-3.5-sonnet">claude-3.5-sonnet</option><option value="meta-llama/llama-3.3-70b-instruct">llama-3.3-70b</option><option value="mistralai/mistral-large">mistral-large</option><option value="deepseek/deepseek-chat">deepseek-chat</option></>}
+                        </select>
+                      </div>
+                    </div>
+                    {[
+                      {p:'gemini',key:'geminiApiKey',label:lt.apiGeminiLabel,desc:lt.apiGeminiDesc,link:'https://aistudio.google.com/app/apikey',ph:'AIza...',col:'cyan'},
+                      {p:'groq',key:'groqApiKey',label:lt.apiGroqLabel,desc:lt.apiGroqDesc,link:'https://console.groq.com/keys',ph:'gsk_...',col:'yellow'},
+                      {p:'claude',key:'claudeApiKey',label:lt.apiClaudeLabel,desc:lt.apiClaudeDesc,link:'https://console.anthropic.com/settings/keys',ph:'sk-ant-...',col:'orange'},
+                      {p:'openrouter',key:'openRouterApiKey',label:lt.apiOpenRouterLabel,desc:lt.apiOpenRouterDesc,link:'https://openrouter.ai/keys',ph:'sk-or-...',col:'purple'},
+                    ].map(({p,key,label,desc,link,ph,col})=>(
+                      <div key={p} className={`p-3 rounded-xl border transition-all ${ls.activeAiProvider===p?`border-${col}-500/60 bg-${col}-900/10`:'border-white/5 bg-slate-800/30'}`}>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <label className="text-[10px] text-slate-400 uppercase font-bold">{label}</label>
+                          {ls[key]&&<span className="text-[9px] text-green-400 font-bold">● ON</span>}
+                        </div>
+                        <input type="password" value={ls[key]||''} onChange={e=>hc(key,e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white font-mono outline-none focus:border-cyan-500" placeholder={ph}/>
+                        <p className="text-[10px] text-slate-500 mt-1">{desc} <a href={link} target="_blank" className="text-cyan-400 hover:underline">→</a></p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* RSS */}
+                {tab==='rss'&&(
+                  <div className="space-y-4 animate-fade-in">
+                    <h3 className="text-base font-bold text-white flex items-center gap-2">{lt.tabRss}</h3>
+                    <div className="bg-slate-800/30 p-4 rounded-xl border border-white/5 space-y-3">
+                      <div className="grid grid-cols-2 gap-2">
+                        <input placeholder={lt.rssChannelName} value={feedName} onChange={e=>setFeedName(e.target.value)} className="bg-slate-900 border border-slate-700 rounded p-2 text-xs outline-none focus:border-cyan-500 text-white"/>
+                        <input placeholder={lt.rssChannelUrl} value={feedUrl} onChange={e=>setFeedUrl(e.target.value)} className="bg-slate-900 border border-slate-700 rounded p-2 text-xs outline-none focus:border-cyan-500 text-white"/>
+                        <button onClick={()=>{if(!feedUrl)return;setLf(p=>[...p,{id:Date.now().toString(),name:feedName||'Feed',url:feedUrl,enabled:true}]);setFeedName('');setFeedUrl('');}} className="col-span-2 bg-cyan-600 hover:bg-cyan-500 py-2 rounded text-xs font-bold flex items-center justify-center gap-2 text-white"><Plus size={13}/>{lt.rssAddBtn}</button>
+                      </div>
+                      <div className="space-y-2 max-h-52 overflow-y-auto custom-scrollbar">
+                        {lf.map(f=>(
+                          <div key={f.id} className="flex items-center justify-between bg-slate-900/50 p-2 rounded border border-white/5">
+                            <div><span className="text-xs font-bold text-white">{f.name}</span><div className="text-[10px] text-slate-500 truncate max-w-[180px]">{f.url}</div></div>
+                            <div className="flex items-center gap-2">
+                              <input type="checkbox" checked={f.enabled} onChange={e=>setLf(p=>p.map(x=>x.id===f.id?{...x,enabled:e.target.checked}:x))} className="accent-cyan-400"/>
+                              <button onClick={()=>setLf(p=>p.filter(x=>x.id!==f.id))} className="text-red-400 hover:text-red-300"><Trash2 size={13}/></button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* GUIDE */}
+                {tab==='guide'&&(
+                  <div className="space-y-4 animate-fade-in">
+                    <h3 className="text-base font-bold text-white border-b border-white/10 pb-2 flex items-center gap-2"><BookOpen size={16} className="text-cyan-400"/>{lt.guideTitle}</h3>
+                    {[
+                      {title:lt.guideInstallTitle,body:lt.guideInstallBody,c:'border-cyan-500'},
+                      {title:lt.guideApiTitle,body:lt.guideApiBody,c:'border-fuchsia-500'},
+                      {title:lt.guideEditTitle,body:lt.guideEditBody,c:'border-yellow-500'},
+                      {title:lt.guideModulesTitle,body:lt.guideModulesBody,c:'border-green-500'},
+                      {title:lt.guidePomodoroTitle,body:lt.guidePomodoroBody,c:'border-orange-500'},
+                      {title:lt.guideNewsTitle,body:lt.guideNewsBody,c:'border-blue-500'},
+                      {title:lt.guideOrganizerTitle,body:lt.guideOrganizerBody,c:'border-pink-500'},
+                      {title:lt.guideBackupTitle,body:lt.guideBackupBody,c:'border-emerald-500'},
+                      {title:lt.guideWeatherTitle,body:lt.guideWeatherBody,c:'border-sky-500'},
+                    ].map((s,i)=>(
+                      <div key={i} className={`p-4 bg-slate-800/60 rounded-xl border-l-4 ${s.c}`}>
+                        <div className="text-sm font-bold text-white mb-1">{s.title}</div>
+                        <div className="text-xs text-slate-300 leading-relaxed">{s.body}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* DATA */}
+                {tab==='data'&&(
+                  <div className="space-y-4 animate-fade-in">
+                    <h3 className="text-base font-bold text-white border-b border-white/10 pb-2 flex items-center gap-2"><Database size={16}/>{lt.tabData}</h3>
+                    <div className="p-4 bg-slate-800/30 rounded-xl border border-white/5 space-y-3">
+                      <h4 className="text-xs font-bold uppercase text-slate-500">{lt.dataMigration}</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button onClick={()=>{
+                          const blob=new Blob([JSON.stringify({settings:ls,buttons:lb,feeds:lf},null,2)],{type:'application/json'});
+                          const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='nexus_hub_backup.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+                        }} className="p-3 bg-slate-800 border border-slate-700 rounded-lg hover:bg-cyan-900/40 hover:border-cyan-500/50 text-xs font-bold text-white flex items-center justify-center gap-2 transition-colors">
+                          <Download size={13}/>{lt.exportAll}
+                        </button>
+                        <button onClick={()=>{
+                          const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+                          inp.onchange=e=>{
+                            const f=e.target.files[0];if(!f)return;
+                            const r=new FileReader();r.onload=re=>{
+                              try{const d=JSON.parse(re.target.result);if(d.settings)setLs(p=>({...INIT_SETTINGS,...p,...d.settings}));if(d.feeds)setLf(d.feeds);if(d.buttons&&Array.isArray(d.buttons)){setLb(d.buttons);onSaveButtons(d.buttons);}alert(lt.importSuccess);}
+                              catch(err){alert(lt.importError);}
+                            };r.readAsText(f);
+                          };inp.click();
+                        }} className="p-3 bg-slate-800 border border-slate-700 rounded-lg hover:bg-fuchsia-900/40 hover:border-fuchsia-500/50 text-xs font-bold text-white flex items-center justify-center gap-2 transition-colors">
+                          <FileText size={13}/>{lt.importAll}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-red-900/10 rounded-xl border border-red-500/30 space-y-3">
+                      <h4 className="text-xs font-bold uppercase text-red-500 flex items-center gap-2"><Zap size={13}/>{lt.emergencyProtocol}</h4>
+                      <p className="text-[10px] text-slate-400">{lt.emergencyWarning}</p>
+                      <button onClick={onResetAll} className="w-full p-3 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 text-sm active:scale-95 transition-all"><RotateCcw size={18}/>{lt.factoryReset}</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="p-4 border-t border-slate-800 flex justify-end gap-3">
+              <button onClick={onClose} className="px-4 py-2 text-slate-400 hover:text-white font-bold text-xs uppercase tracking-widest">{lt.closeBtn}</button>
+              <button onClick={handleSave} className="px-7 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-xl font-bold shadow-lg hover:shadow-cyan-500/20 flex items-center gap-2">
+                <Save size={16}/>{lt.saveChanges}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ── EDIT MODULE MODAL ────────────────────────────────────────────────────
+    const EditModal = ({btn, t, settings, onSave, onClose}) => {
+      const [form, setForm] = useState(btn);
+      const hf=(k,v)=>setForm(p=>({...p,[k]:v}));
+      return (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in">
+          <div className="bg-slate-900 border border-cyan-500/50 w-full max-w-md rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h3 className="text-lg font-display font-bold text-cyan-400 mb-4">{t.editModuleTitle}</h3>
+            <div className="space-y-3">
+              <div><label className="text-xs text-slate-400 uppercase">{t.fieldName}</label><input value={form.title||''} onChange={e=>hf('title',e.target.value)} className="w-full mt-1 bg-slate-800 border border-slate-700 rounded p-2 text-white focus:border-cyan-500 outline-none text-sm"/></div>
+              <div><label className="text-xs text-slate-400 uppercase">{t.fieldUrl}</label><input value={form.url||''} onChange={e=>hf('url',e.target.value)} className="w-full mt-1 bg-slate-800 border border-slate-700 rounded p-2 text-white focus:border-cyan-500 outline-none text-sm"/></div>
+              <div><label className="text-xs text-slate-400 uppercase">{t.fieldCategory}</label>
+                <select value={form.category||'General'} onChange={e=>hf('category',e.target.value)} className="w-full mt-1 bg-slate-800 border border-slate-700 rounded p-2 text-white outline-none text-sm">
+                  {Object.keys(CAT).map(c=><option key={c} value={c}>{catLabel(c,settings.language)}</option>)}
+                </select>
+              </div>
+              <div><label className="text-xs text-slate-400 uppercase">{t.fieldTheme}</label>
+                <select value={form.theme||'neon-blue'} onChange={e=>hf('theme',e.target.value)} className="w-full mt-1 bg-slate-800 border border-slate-700 rounded p-2 text-white outline-none text-sm">
+                  {Object.keys(THEMES).map(th=><option key={th} value={th}>{th}</option>)}
+                </select>
+              </div>
+              <div><label className="text-xs text-slate-400 uppercase">{t.fieldSize}</label>
+                <select value={form.size||'standard'} onChange={e=>hf('size',e.target.value)} className="w-full mt-1 bg-slate-800 border border-slate-700 rounded p-2 text-white outline-none text-sm">
+                  <option value="small">{t.sizeSmall}</option><option value="standard">{t.sizeStandard}</option><option value="wide">{t.sizeWide}</option><option value="large">{t.sizeLarge}</option>
+                </select>
+              </div>
+              <div><label className="text-xs text-slate-400 uppercase">{t.fieldColor}</label><input type="color" value={form.indicatorColor||'#00f0ff'} onChange={e=>hf('indicatorColor',e.target.value)} className="w-full mt-1 h-10 rounded cursor-pointer"/></div>
+            </div>
+            <div className="flex gap-3 mt-5">
+              <button onClick={onClose} className="flex-1 py-2.5 border border-slate-700 rounded-xl text-slate-300 hover:bg-slate-800 font-bold text-sm">{t.cancel}</button>
+              <button onClick={()=>onSave(form)} className="flex-1 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-xl font-bold text-sm">{t.save}</button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ── APP ──────────────────────────────────────────────────────────────────
+    const App = () => {
+      const [settings, setSettings] = useState(()=>{ const s=load('nexus_settings',null);return s?{...INIT_SETTINGS,...s}:INIT_SETTINGS; });
+      const [buttons, setButtons] = useState(()=>load('nexus_buttons',INIT_BUTTONS));
+      const [feeds, setFeeds] = useState(()=>load('nexus_feeds',INIT_FEEDS));
+      const [settingsOpen, setSettingsOpen] = useState(false);
+      const [chatOpen, setChatOpen] = useState(false);
+      const [pomodoroOpen, setPomodoroOpen] = useState(false);
+      const [orgOpen, setOrgOpen] = useState(false);
+      const [editing, setEditing] = useState(false);
+      const [search, setSearch] = useState('');
+      const [editBtn, setEditBtn] = useState(null);
+      const [catPick, setCatPick] = useState(null);
+      const [showPrivacy, setShowPrivacy] = useState(false);
+      const [showLegal, setShowLegal] = useState(false);
+
+      const t = T[settings.language]||T.es;
+
+      useEffect(()=>save('nexus_settings',settings),[settings]);
+      useEffect(()=>save('nexus_buttons',buttons),[buttons]);
+      useEffect(()=>save('nexus_feeds',feeds),[feeds]);
+
+      const resetAll=()=>{ if(confirm('¿Borrar TODO? Esta acción es irreversible.')){localStorage.clear();window.location.reload();} };
+
+      const filtered = buttons.filter(b=>b.title.toLowerCase().includes(search.toLowerCase())||b.category.toLowerCase().includes(search.toLowerCase()));
+      const groups = {
+        pinned: filtered.filter(b=>b.pinned),
+        social: filtered.filter(b=>b.socialNetwork&&b.socialNetwork!=='none'&&!b.pinned),
+        business: filtered.filter(b=>b.category==='Business'&&!b.pinned),
+        web_tools: filtered.filter(b=>b.category==='Web Tools'&&!b.pinned),
+        ai_models: filtered.filter(b=>b.category==='AI Models'&&!b.pinned),
+        dev: filtered.filter(b=>b.category==='Development'&&!b.pinned),
+        more_ia: filtered.filter(b=>b.category==='More IA Tools'&&!b.pinned),
+        general: filtered.filter(b=>!b.pinned&&(!b.socialNetwork||b.socialNetwork==='none')&&!['Business','Web Tools','AI Models','Development','More IA Tools'].includes(b.category)),
+      };
+      const SEC = {
+        pinned:{title:t.pinned,color:'yellow'},
+        social:{title:t.socials,color:'pink'},
+        business:{title:t.business,color:'emerald'},
+        web_tools:{title:t.webTools,color:'blue'},
+        ai_models:{title:catLabel('AI Models',settings.language),color:'cyan'},
+        dev:{title:catLabel('Development',settings.language),color:'slate'},
+        more_ia:{title:catLabel('More IA Tools',settings.language),color:'indigo'},
+        general:{title:t.general,color:'cyan'},
+      };
+
+      const addBtn=()=>{ const nb={id:Date.now().toString(),title:'Nuevo',url:'https://',category:'General',theme:'neon-blue',size:'standard',pinned:false,indicatorColor:'#00f0ff',subButtons:[]};setButtons(p=>[...p,nb]);setEditBtn(nb); };
+      const saveBtn=(form)=>{ setButtons(p=>p.map(b=>b.id===form.id?{...b,...form}:b));setEditBtn(null); };
+      const moveBtn=(id,dir)=>{ setButtons(p=>{const a=[...p];const i=a.findIndex(b=>b.id===id);const ti=dir==='up'||dir==='left'?i-1:i+1;if(ti>=0&&ti<a.length)[a[i],a[ti]]=[a[ti],a[i]];return a;}); };
+
+      const renderSection = key => {
+        const list = groups[key];
+        if(!list||(!list.length&&!editing)) return null;
+        const s = SEC[key]||{title:key,color:'slate'};
+        return (
+          <section key={key} className="animate-fade-in-up">
+            <div className={`flex items-center gap-3 mb-5 border-b pb-2 border-${s.color}-500/20`}>
+              <h2 className={`text-xl font-display font-bold tracking-wide text-${s.color}-100`}>{s.title}</h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5 grid-flow-dense">
+              {list.map(btn=>(
+                <FButton key={btn.id} btn={btn} settings={settings} isEditing={editing}
+                  onEdit={b=>setEditBtn(b)}
+                  onDelete={id=>setButtons(p=>p.filter(b=>b.id!==id))}
+                  onPin={id=>setButtons(p=>p.map(b=>b.id===id?{...b,pinned:!b.pinned}:b))}
+                  onCatChange={id=>setCatPick(id)}
+                  onMove={moveBtn}
+                />
+              ))}
+            </div>
+          </section>
+        );
+      };
+
+      return (
+        <div className={`min-h-screen flex flex-col font-sans overflow-x-hidden ${settings.darkMode?'bg-slate-900 text-white':'bg-slate-100 text-slate-900'}`}>
+
+          {/* HEADER */}
+          <header className={`sticky top-0 z-40 backdrop-blur-md border-b transition-all ${settings.darkMode?'bg-slate-900/85 border-white/5 shadow-lg':'bg-white/85 border-slate-200 shadow-md'}`}>
+            <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <button onClick={()=>setSettingsOpen(true)} className="p-2 rounded-lg bg-slate-800 text-cyan-400 hover:bg-slate-700"><Menu size={22}/></button>
+                <Logo/>
+              </div>
+              <div className="flex-1 max-w-xs hidden md:block">
+                <div className="relative">
+                  <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/>
+                  <input value={search} onChange={e=>setSearch(e.target.value)} placeholder={t.search} className="w-full pl-9 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-full text-sm text-white focus:border-cyan-500 outline-none"/>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <button onClick={()=>setSettings(p=>({...p,darkMode:!p.darkMode}))} className="p-2 text-slate-300 hover:text-yellow-400 transition-colors"><Sun size={19}/></button>
+                <button onClick={()=>setPomodoroOpen(!pomodoroOpen)} className="p-2 text-slate-400 hover:text-white"><Timer size={19}/></button>
+                <button onClick={()=>setOrgOpen(true)} className="p-2 text-slate-400 hover:text-white"><Calendar size={19}/></button>
+                <button onClick={()=>setChatOpen(true)} className="p-2 text-slate-400 hover:text-fuchsia-400"><MessageCircle size={19}/></button>
+                <button onClick={()=>setEditing(!editing)} className={`p-2 rounded-lg ${editing?'bg-yellow-500/20 text-yellow-400':'text-slate-400 hover:text-white'}`}><Edit2 size={19}/></button>
+              </div>
+            </div>
+          </header>
+
+          <main className="flex-1 max-w-7xl mx-auto w-full p-5 space-y-10 pb-36">
+
+            {/* Weather + Chat widget row */}
+            <div className="flex flex-col md:flex-row gap-4 items-stretch">
+              <WeatherWidget settings={settings} t={t}/>
+              <ChatWidget settings={settings} t={t}/>
+            </div>
+
+            {/* News */}
+            <NewsSlideshow feeds={feeds} settings={settings} t={t} onHeightChange={v=>setSettings(p=>({...p,newsHeightMultiplier:v}))}/>
+
+            {/* Edit toolbar */}
+            {editing&&(
+              <div className="sticky top-20 z-30 flex flex-wrap justify-center gap-3 p-4 bg-slate-900/90 backdrop-blur rounded-2xl border border-white/10 shadow-2xl">
+                <button onClick={addBtn} className="bg-cyan-600 hover:bg-cyan-500 px-7 py-2.5 rounded-full text-white font-bold flex items-center gap-2 text-sm"><Plus size={18}/>{t.addButton}</button>
+                <button onClick={()=>setEditing(false)} className="bg-green-600 hover:bg-green-500 px-7 py-2.5 rounded-full text-white font-bold flex items-center gap-2 text-sm"><Check size={18}/>{t.save}</button>
+              </div>
+            )}
+
+            {/* Sections */}
+            {(settings.categoryOrder||INIT_SETTINGS.categoryOrder).map(renderSection)}
+
+            {/* FOOTER */}
+            <footer className="mt-16 pt-8 border-t border-white/5 text-center space-y-4 pb-8">
+              <div className="flex items-center justify-center gap-2">
+                <div className="h-px w-16 bg-gradient-to-r from-transparent to-cyan-500/50"/>
+                <span className="text-[10px] font-mono tracking-[0.3em] text-cyan-500 uppercase">NEXUS HUB DUVI</span>
+                <div className="h-px w-16 bg-gradient-to-l from-transparent to-cyan-500/50"/>
+              </div>
+              <p className="text-xs text-slate-500">{t.footerCredits}</p>
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                <span className="text-xs text-slate-500">{t.footerCreatedBy}</span>
+                <a href="https://www.linkedin.com/in/jaime-andr%C3%A9s-due%C3%B1as-vicu%C3%B1a" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0A66C2]/20 border border-[#0A66C2]/40 text-blue-400 hover:bg-[#0A66C2]/40 transition-all text-xs font-semibold">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                  Jaime Andrés Dueñas Vicuña
+                </a>
+              </div>
+              <div className="flex items-center justify-center gap-3 flex-wrap">
+                <a href="https://www.paypal.com/paypalme/texiduvi" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-900/20 border border-blue-700/40 text-blue-400 hover:bg-blue-800/30 transition-all text-xs font-semibold">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5"><path d="M7.076 21.337H2.47a.641.641 0 01-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 00-.607-.541c-.59 3.025-2.566 4.643-5.813 4.643h-2.19c-.13 0-.24.095-.261.224l-.771 4.897-.17 1.079H8.31l.125-.794 1.007-6.397.137-.85h2.71c3.424 0 5.772-1.394 6.51-4.319z"/></svg>
+                  {t.footerSupport} — PayPal
+                </a>
+                <button onClick={()=>setShowPrivacy(true)} className="text-xs text-slate-500 hover:text-cyan-400 underline underline-offset-2">{t.footerPrivacy}</button>
+                <span className="text-slate-700">·</span>
+                <button onClick={()=>setShowLegal(true)} className="text-xs text-slate-500 hover:text-cyan-400 underline underline-offset-2">{t.footerLegal}</button>
+              </div>
+            </footer>
+          </main>
+
+          {/* Floating pomodoro */}
+          <div className="relative">
+            <Pomodoro settings={settings} t={t} isOpen={pomodoroOpen} onClose={()=>setPomodoroOpen(false)}/>
+          </div>
+
+          {/* Modals */}
+          <ChatModal settings={settings} t={t} isOpen={chatOpen} onClose={()=>setChatOpen(false)}/>
+          <Organizer settings={settings} t={t} isOpen={orgOpen} onClose={()=>setOrgOpen(false)}/>
+          <SettingsModal isOpen={settingsOpen} onClose={()=>setSettingsOpen(false)} settings={settings} onSaveSettings={setSettings} feeds={feeds} onSaveFeeds={setFeeds} buttons={buttons} onSaveButtons={setButtons} t={t} onResetAll={resetAll}/>
+
+          {/* Edit module modal */}
+          {editBtn && <EditModal btn={editBtn} t={t} settings={settings} onSave={saveBtn} onClose={()=>setEditBtn(null)}/>}
+
+          {/* Category picker */}
+          {catPick&&(
+            <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in" onClick={()=>setCatPick(null)}>
+              <div className="bg-slate-900 border border-fuchsia-500/50 w-full max-w-xs rounded-2xl p-6 shadow-2xl animate-scale-up" onClick={e=>e.stopPropagation()}>
+                <h3 className="text-lg font-display font-bold text-fuchsia-400 mb-4">{t.changeCategoryTitle}</h3>
+                <div className="space-y-2">
+                  {Object.keys(CAT).map(c=>(
+                    <button key={c} onClick={()=>{setButtons(p=>p.map(b=>b.id===catPick?{...b,category:c}:b));setCatPick(null);}} className="w-full text-left p-3 bg-slate-800 hover:bg-fuchsia-900/30 rounded-lg text-sm text-slate-200 hover:text-fuchsia-400 transition-colors">{catLabel(c,settings.language)}</button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Privacy modal */}
+          {showPrivacy&&(
+            <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in" onClick={()=>setShowPrivacy(false)}>
+              <div className="bg-slate-900 border border-cyan-500/30 w-full max-w-lg rounded-2xl p-8 shadow-2xl max-h-[80vh] overflow-y-auto custom-scrollbar" onClick={e=>e.stopPropagation()}>
+                <div className="flex justify-between items-center mb-5"><h2 className="text-xl font-display font-bold text-cyan-400">{t.privacyTitle}</h2><button onClick={()=>setShowPrivacy(false)} className="text-slate-400 hover:text-white"><X size={20}/></button></div>
+                <div className="space-y-4 text-sm text-slate-300 leading-relaxed">
+                  <p><strong className="text-white">1. Datos recopilados</strong><br/>NEXUS HUB DUVI no recopila, transmite ni almacena ningún dato personal en servidores externos. Toda la información se almacena exclusivamente en el dispositivo del usuario (localStorage).</p>
+                  <p><strong className="text-white">2. API Keys</strong><br/>Las claves API introducidas se guardan únicamente en el dispositivo local y nunca son enviadas a servidores del desarrollador. Las peticiones se realizan directamente desde el navegador del usuario a los servicios de IA.</p>
+                  <p><strong className="text-white">3. Servicios de terceros</strong><br/>La app puede conectarse a: Gemini AI, Groq API, Anthropic Claude, OpenRouter, Open-Meteo (clima) y RSS feeds. Cada servicio tiene su propia política de privacidad.</p>
+                  <p><strong className="text-white">4. Cookies</strong><br/>No se usan cookies de rastreo. El sessionStorage se usa únicamente para banners de instalación.</p>
+                  <p><strong className="text-white">5. Contacto</strong><br/><a href="https://www.linkedin.com/in/jaime-andr%C3%A9s-due%C3%B1as-vicu%C3%B1a" target="_blank" className="text-cyan-400 hover:underline">LinkedIn — Jaime Andrés Dueñas Vicuña</a></p>
+                  <p className="text-xs text-slate-500 pt-4 border-t border-white/5">Última actualización: enero 2026.</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Legal modal */}
+          {showLegal&&(
+            <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in" onClick={()=>setShowLegal(false)}>
+              <div className="bg-slate-900 border border-fuchsia-500/30 w-full max-w-lg rounded-2xl p-8 shadow-2xl max-h-[80vh] overflow-y-auto custom-scrollbar" onClick={e=>e.stopPropagation()}>
+                <div className="flex justify-between items-center mb-5"><h2 className="text-xl font-display font-bold text-fuchsia-400">{t.legalTitle}</h2><button onClick={()=>setShowLegal(false)} className="text-slate-400 hover:text-white"><X size={20}/></button></div>
+                <div className="space-y-4 text-sm text-slate-300 leading-relaxed">
+                  <p><strong className="text-white">Titular</strong><br/>Jaime Andrés Dueñas Vicuña — <a href="https://www.linkedin.com/in/jaime-andr%C3%A9s-due%C3%B1as-vicu%C3%B1a" target="_blank" className="text-fuchsia-400 hover:underline">LinkedIn</a></p>
+                  <p><strong className="text-white">Propiedad intelectual</strong><br/>© 2026 NEXUS HUB DUVI. Todos los derechos reservados. El código fuente, diseño e interfaz son propiedad exclusiva de Jaime Andrés Dueñas Vicuña. Prohibida su reproducción sin autorización expresa.</p>
+                  <p><strong className="text-white">Uso permitido</strong><br/>Esta aplicación se ofrece para uso personal y no comercial. Cualquier uso comercial requiere licencia expresa del autor.</p>
+                  <p><strong className="text-white">Exención de responsabilidad</strong><br/>El desarrollador no se hace responsable del uso de servicios de IA de terceros ni de la disponibilidad de fuentes RSS externas.</p>
+                  <p className="text-xs text-slate-500 pt-4 border-t border-white/5">Versión 1.0 — enero 2026.</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // Mount
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+
+  <script>
+    // Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/Nexus-ALL-HUB/sw.js', {scope:'/Nexus-ALL-HUB/'})
+          .then(r=>console.log('[SW] OK scope:',r.scope))
+          .catch(e=>console.error('[SW] Error:',e));
+      });
+    }
+
+    // PWA Install
+    let deferredPrompt = null;
+    const installBtn = document.getElementById('pwa-install-btn');
+    const iosBanner  = document.getElementById('pwa-banner');
+    const iosBannerClose = document.getElementById('pwa-banner-close');
+    const isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.classList.add('show');
+      console.log('[PWA] Install prompt ready');
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) { iosBanner.classList.add('show'); return; }
+      deferredPrompt.prompt();
+      const {outcome} = await deferredPrompt.userChoice;
+      console.log('[PWA] outcome:', outcome);
+      deferredPrompt = null;
+      installBtn.classList.remove('show');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      installBtn.classList.remove('show');
+      iosBanner.classList.remove('show');
+    });
+
+    // iOS Safari banner
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    if (isIOS && isSafari && !isInstalled && !sessionStorage.getItem('pwa_shown')) {
+      setTimeout(() => { iosBanner.classList.add('show'); sessionStorage.setItem('pwa_shown','1'); }, 2500);
+    }
+
+    if (iosBannerClose) iosBannerClose.addEventListener('click', () => iosBanner.classList.remove('show'));
+  </script>
+</body>
+</html>
